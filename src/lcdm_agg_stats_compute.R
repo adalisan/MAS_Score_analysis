@@ -3,8 +3,19 @@ library(zoo)
 #input command line arguments+
 args=commandArgs()
 #FILENAME=args[6]
-REGION=args[7]
-SUBREGION=args[8]
+#REGION=args[7]
+#SUBREGION=args[8]
+
+REGIONs= outer(c("lh_","rh_") ,c("TL","cingulate"),paste0)
+REGION="lh_TL"
+
+
+if (REGION=="lh_TL" |REGION=="rh_TL" ) {
+  SUBREGIONs = outer(c("lh_","rh_"),c("itg","mtg","stg"),paste0)
+
+} else {SUBREGIONs = outer(c("lh_","rh_"),c("antcing","postcing"))}
+
+SUBREGION= SUBREGIONs[1]
 #DATA_DIR="/cis/project/sydney/data_analysis_all/"
 DATA_DIR="/cis/project/sydney/data_analysis_wave2/"
 tag_wave_1_1 <- "MAS.20100921_Antsy"
@@ -18,44 +29,54 @@ AUXDATA_DIR = "./data/"
 #name of output file
 #pdf( file = paste(RESULT_DIR,SUBREGION,"/",SUBREGION,"_lcdmplot_dens10.pdf",sep=""), height = 10, width = 14)
 
-FILENAMEs = paste0(AUXDATA_DIR,"datalist",c(tag_wave_1_1,tag_wave_1_2,tag_wave_2),".txt")
+FILENAMEs = paste0(AUXDATA_DIR,"datalist_",c(tag_wave_1_1,tag_wave_1_2,tag_wave_2),".txt")
 
 #FILENAMEs = paste0(AUXDATA_DIR,c("subjects_wave1_full.txt", "subjects_wave2_full.txt"))
 
 
 
-file.list<- read.table(FILENAMEs)
+#file.list<- read.table(FILENAMEs)
 #calculating data number and number of histgrams to make given there are a max of 10 datasets per histogram
-DATANUMB=nrow(file.list)
+#DATANUMB=nrow(file.list)
 HISTNUMB= 1 #ceiling(DATANUMB/10)
 SKIP<-c(seq(0,HISTNUMB*10,10))
 
-
-
-lcdmstats<-c('thk95','thk90','vol95','vol90')
+lcdmstats<-data.frame(thk95=c(),thk99=c(),vol95=c(),vol99=c())
 subjids<-c('Subject ID')
+lcdmstats_agg <- lcdmstats
+subjids_agg <- subjids
 for (pat_grp in 1:3){
-  SUBJECTDIR=SUBJECT_DIRs[pat_grp]
+  lcdmstats<-data.frame(thk95=c(),thk99=c(),vol95=c(),vol99=c())
+  subjids<-data.frame(SubjectID=c(),DataID=c())
+  SUBJECT_DIR=SUBJECT_DIRs[pat_grp]
+  filename = FILENAMEs[pat_grp]
+  if (pat_grp<3) {
+    wave_tag= "wave1"
+  } else {wave_tag= "wave2"}
+  
   for (n in 1:HISTNUMB) {
     READPATH<-c()
-    names<-read.table(FILENAMEs,skip=SKIP[n]) #file that contains file names or path names of the subjects
-    subjids<-c(subjids,names[[1]])
-    print(subjids)
+    names<-read.table(filename,skip=SKIP[n]) #file that contains file names or path names of the subjects
+    subjids<-rbind(subjids,data.frame(SubjectID=substr(names[[1]],1,4),DataID= names[[1]]))
+    #print(subjids)
     ROWS=nrow(na.omit(names))
     col= c('red','blue','orange','green','gray','pink',70,5,'yellow','brown')
     thk95<-c()
     thk99<-c()
     vol95<-c()
     vol99<-c()
+    print(ROWS)
     for (i in 1:ROWS){
       fn1=paste(SUBJECT_DIR,names[[1]][i],"/FSLCDM_v2.3/",REGION,"/",SUBREGION,"_1_manseg_quartile_pialmsk_AntsyGrey.txt",sep="") 
       fn2=paste(SUBJECT_DIR,names[[1]][i],"/FSLCDM_v2.3/",REGION,"/",SUBREGION,"_1_quartile_pialmsk_AntsyGrey.txt",sep="")
+      print(fn1)
       if ( file.exists(fn1) ){
         xdata=scan(fn1)
-      }  else if ( file.exists(fn1) ){
+      }  else if ( file.exists(fn2) ){
         xdata=scan(fn2)
       }
       else next
+      
       
       
       thk95[i]=quantile(xdata,.95)
@@ -67,9 +88,15 @@ for (pat_grp in 1:3){
     
     lcdmstats<-rbind(lcdmstats,cbind(thk95,thk99,vol95,vol99))
   }
+  if (!file.exists(paste0(AUXDATA_DIR,"/",SUBREGION))){
+    dir.create(paste0(AUXDATA_DIR,"/",SUBREGION))
+  }
+  write.table(cbind(subjids,lcdmstats), file=paste(AUXDATA_DIR,"/",SUBREGION,"/lcdmstats_",wave_tag,".txt",sep=""), row.names=F, col.names=F)
+  
+  lcdmstats_agg<- rbind(lcdmstats_agg,lcdmstats)
 }
-print(subjids)
-write.table(cbind(subjids,lcdmstats), file=paste(DATA_DIR,"/",SUBREGION,"/lcdmstats.txt",sep=""), row.names=F, col.names=F)
+#print(subjids)
+
 
 
 # 
