@@ -77,6 +77,8 @@ for (pat_grp in 1:3){
       }
       else next
       
+      xdata=xdata[xdata>-2]
+      xdata=xdata[xdata<8]      
       
       
       thk95[i]=quantile(xdata,.95)

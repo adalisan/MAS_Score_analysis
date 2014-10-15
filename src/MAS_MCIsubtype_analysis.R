@@ -23,6 +23,7 @@ W2_dir_tag <- "_wave2"
 subregions <- outer(c("lh_","rh_"),c("stg","itg","mtg","antcing","postcing"),paste0)
 
 #wave 1 files
+OUTPUT_DIR <- "./data/"
 DATA_DIR <- ""
 DATA_DIR_W1 <-paste0("./data/data_analysis",W1_dir_tag)
 DATA_DIR_W1_s <-paste0("./data/data_analysis",W1_dir_tag_s)
@@ -182,7 +183,7 @@ all.df <-cbind(data.frame(ID=all.files.merged.df$ID,W1_subclass=subclass.df$M_W1
                     W1h_Global_Cogn_Score =all.files.merged.df$W1h_GlobalCognition,
                     W2h_Global_Cogn_Score =all.files.merged.df$W2h_GlobalCognition,
                     W1n_Global_Cogn_Score =all.files.merged.df$W1n_GlobalCognition,
-                    W1n_Global_Cogn_Score =all.files.merged.df$W2n_GlobalCognition,
+                    W2n_Global_Cogn_Score =all.files.merged.df$W2n_GlobalCognition,
                     sex=all.files.merged.df$Sex.x,
                     age=all.files.merged.df$W1_Age.x
                     
@@ -204,11 +205,11 @@ all.df$W1_subclass[all.df$W1_subclass=="no complaints, nmdMCI"]<-"nmdMCI"
 
 all.df<- all.df[all.df$W1_subclass %in% c("normal","aMCI","nMCI","amdMCI","nmdMCI"),]
 
-p.cutoff<- 0.001
+p.cutoff<- 0.005
 
 LCDM_measures_W1 <- LCDM_measures[1:30]
 LCDM_measures_W2 <- LCDM_measures[31:60]
-
+sink(paste0(OUTPUT_DIR,"LCDM_anova_wrt_Wave1_subclass.txt"))
 
 for (dep.var in LCDM_measures){
   model.form <- as.formula(paste(dep.var,"~age+sex+ICV_W1+W1_subclass")) #age+sex+ICV+
@@ -226,11 +227,65 @@ for (dep.var in LCDM_measures){
   }
     
 }
+sink()
 
-p.cutoff<- 0.001
-dep.var <- "W1h_Global_Cogn_Score"
+p.cutoff<- 0.005
+#dep.var <- "W1h_Global_Cogn_Score"
+dep.var <- "W1n_Global_Cogn_Score"
+sink(paste0(OUTPUT_DIR,"LCDM_anova_Wave1_CognScore_wrt_LCDM_measure.txt"))
 for (indep.var in LCDM_measures_W1){
   model.form <- as.formula(paste(dep.var,"~age+sex+ICV_W1+",indep.var)) #age+sex+ICV+
+  anova.fit<-aov(model.form,data=all.df)
+  anova.fit.summ<-summary(anova.fit)
+  
+  if (anova.fit.summ[[1]][,5][4]<p.cutoff){
+    print(dep.var)
+    #print(anova.fit)
+    print("        ")
+    print(" p.val for subclass       ")
+    print(anova.fit.summ[[1]][,5][4])
+    print("        ")
+    print(anova.fit)
+  }
+  
+}
+
+sink()
+
+
+
+
+p.cutoff<- 0.005
+#dep.var <- "W2h_Global_Cogn_Score"
+dep.var <- "W2n_Global_Cogn_Score"
+sink(paste0(OUTPUT_DIR,"LCDM_anova_Wave2_CognScore_wrt_LCDM_measure.txt"))
+for (indep.var in LCDM_measures_W1){
+  model.form <- as.formula(paste(dep.var,"~age+sex+ICV_W1+",indep.var)) #age+sex+ICV+
+  anova.fit<-aov(model.form,data=all.df)
+  anova.fit.summ<-summary(anova.fit)
+  
+  if (anova.fit.summ[[1]][,5][4]<p.cutoff){
+    print(dep.var)
+    #print(anova.fit)
+    print("        ")
+    print(" p.val for subclass       ")
+    print(anova.fit.summ[[1]][,5][4])
+    print("        ")
+    print(anova.fit)
+  }
+  
+}
+
+sink()
+
+
+
+p.cutoff<- 0.005
+
+all.df$Score_change <- all.df$W2n_Global_Cogn_Score-all.df$W1n_Global_Cogn_Score
+sink(paste0(OUTPUT_DIR,"LCDM_anova_CognScore_change_wrt_LCDM_measure.txt"))
+for (indep.var in LCDM_measures_W1){
+  model.form <- as.formula(paste("Score_change~age+sex+ICV_W1+",indep.var)) #age+sex+ICV+
   anova.fit<-aov(model.form,data=all.df)
   anova.fit.summ<-summary(anova.fit)
   
@@ -249,5 +304,4 @@ for (indep.var in LCDM_measures_W1){
 
 
 
-
-
+sink()
