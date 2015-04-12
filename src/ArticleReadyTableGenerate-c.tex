@@ -1,0 +1,79 @@
+\documentclass[12pt]{article}
+
+\usepackage{listings}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\pgfplotsset{compat=1.10}
+\usepackage[hang,footnotesize,bf,margin=.5in]{caption}
+\usepackage{epstopdf}
+\usepackage[indention=10pt,singlelinecheck=false]{subfig}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage[top=1in, bottom=1.3in, left=.7in, right=.7in, paperwidth=8.5in, paperheight=11in]{geometry}
+\usepackage{setspace}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{pdfpages}
+\usepackage[style=numeric,url=false,isbn=false,doi=false,maxnames=30,natbib=true, uniquename=init,firstinits]{biblatex}
+\AtEveryBibitem{%
+  \clearfield{day}%
+  \clearfield{month}%
+  \clearfield{endday}%
+  \clearfield{endmonth}%
+}
+\DeclareNameAlias{default}{last-first}
+\renewbibmacro{in:}{}
+\setlength{\footskip}{24pt}
+\newcommand{\hilight}[1]{\colorbox{yellow}{#1}}
+\newcommand\T{\rule{0pt}{2.6ex}}
+\newcommand\B{\rule[-1.2ex]{0pt}{0pt}}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,arrows}
+
+\bibliography{library,library_added}
+
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+
+
+
+\begin{table}[t]
+  \centering
+	\begin{tabular}{rrrrrrr}
+		\hline
+		Diag \T& Gender & Number & \multicolumn{2}{c}{Age (Yrs)} & \multicolumn{2}{c}{YrsEd (Yrs)} \\
+		& \B & & Mean & SD & Mean & SD \\ \hline
+% latex table generated in R 3.1.2 by xtable 1.7-4 package
+% Tue Dec  2 14:59:07 2014
+  \hline
+normal & Male & 225 & 78.41 & 4.70 & 12.49 & 3.78 \\ 
+  normal & Female & 328 & 78.67 & 4.91 & 11.09 & 3.03 \\ 
+  aMCI & Male &  58 & 79.18 & 4.69 & 12.71 & 4.00 \\ 
+  aMCI & Female &  45 & 80.44 & 5.22 & 11.27 & 3.19 \\ 
+  nMCI & Male &  45 & 78.09 & 4.00 & 11.82 & 3.92 \\ 
+  nMCI & Female &  77 & 79.34 & 4.69 & 10.67 & 3.15 \\ 
+  amdMCI & Male &  45 & 79.12 & 5.16 & 12.28 & 3.82 \\ 
+  amdMCI & Female &  37 & 78.73 & 4.63 & 11.01 & 2.93 \\ 
+  nmdMCI & Male &   9 & 76.87 & 2.69 & 13.00 & 5.50 \\ 
+  nmdMCI & Female &  17 & 75.83 & 3.38 & 9.88 & 2.39 \\ 
+   \hline
+
+
+	\end{tabular}
+	\caption{\textbf{Summary of data used for MCI analysis}.  Summary statistics on the number, age, and years of education of individuals used for the analysis.  Data broken down based on gender and diagnosis.}
+	\label{wave1data}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+

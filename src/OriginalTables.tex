@@ -1,0 +1,282 @@
+\documentclass[12pt]{article}
+
+\usepackage{listings}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage[hang,footnotesize,bf,margin=.5in]{caption}
+\usepackage{epstopdf}
+\usepackage[indention=10pt,singlelinecheck=false]{subfig}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage[top=1in, bottom=1.3in, left=.7in, right=.7in, paperwidth=8.5in, paperheight=11in]{geometry}
+\usepackage{setspace}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{pdfpages}
+\usepackage[style=numeric,url=false,isbn=false,doi=false,maxnames=30,natbib=true, uniquename=init,firstinits]{biblatex}
+\AtEveryBibitem{%
+  \clearfield{day}%
+  \clearfield{month}%
+  \clearfield{endday}%
+  \clearfield{endmonth}%
+}
+\DeclareNameAlias{default}{last-first}
+\renewbibmacro{in:}{}
+\setlength{\footskip}{24pt}
+\newcommand{\hilight}[1]{\colorbox{yellow}{#1}}
+\newcommand\T{\rule{0pt}{2.6ex}}
+\newcommand\B{\rule[-1.2ex]{0pt}{0pt}}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,arrows}
+
+\bibliography{library,library_added}
+
+\begin{document}
+
+\begin{table}[t]
+	\centering
+	\begin{tabular}{rrrrrrr}
+		\hline
+		Diag \T& Gender & Number & \multicolumn{2}{c}{Age (Yrs)} & \multicolumn{2}{c}{YrsEd (Yrs)} \\
+		& \B & & Mean & SD & Mean & SD \\ \hline
+		aMCI\T& men & 48 & 79.22 & .68 & 12.67 & .57 \\
+		& women & 35 & 80.20 & .76 & 11.77 & .55 \\
+		nMCI & men & 20 & 77.91 & 1.06 & 13.55 & 1.13 \\ 		
+		& women & 41 & 77.70 & .73 & 9.93 & .41 \\
+		Control & men & 95 & 77.56 & .45 & 12.98 & .42\\
+		& women & 132 & 78.69 & .41 & 11.02 & .25 \\
+	\end{tabular}
+	\caption{\textbf{Summary of data used for MCI analysis}.  Summary statistics on the number, age, and years of education of individuals used for the analysis.  Data broken down based on gender and diagnosis.}
+	\label{wave1data}
+\end{table}
+
+\newpage
+\begin{table}[h]
+	\centering
+	\footnotesize
+	\begin{tabular}{rrrrrrr}
+	\hline
+	Diag\T & \multicolumn{2}{c}{Male} & \multicolumn{2}{c}{Female} & &  \\
+	& Mean & SE & Mean & SE & Covariates & p-value\\ \hline
+	aMCI\T & 1612093 & 27522 & 1417516 & 27263 & YrsEd (p=.0338) & \\
+	nMCI & 1582675 & 34997 & 1362817 & 17216 &Age(p=.0032) & .0571\\
+	Control & 1582610 & 17404 & 1372451 & 11099 & Gender (p$<$.0001)&\\
+	\end{tabular}
+	\caption{\textbf{ICV Statistics}.  ANCOVA results for ICV.}
+	\label{Wave1.ICV.stats}
+\end{table}
+
+\newpage
+\begin{sidewaystable}
+	\centering
+	\footnotesize
+	\begin{tabular}{l|rr|rrrr|rrrr}
+	\hline
+	\textbf{Region} & & & \multicolumn{4}{c}{Right} \T & \multicolumn{4}{|c}{Left} \\
+	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Covariate & P & Mean & SD & Covariate & P \\
+	\hline\hline
+	\textbf{STG} \T & \multirow{3}{*}{Male} & aMCI & 3.682 & 0.071 & None & .3216 & 3.681 & 0.070	 & YrsEd (p=.0394) & .7100 \\
+							&						& nMCI & 3.899 & 0.093  & &  & 3.787 & 0.091  & ICV (p=.0098)		& \\
+	\multirow{2}{*}{T(mm)}						&						& Cont & 3.709 & 0.064  & & & 3.680 &  0.053 & & \\\cline{2-11}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 3.524 & 0.073 & None & \textbf{.0054} & 3.632 &0.072  & Age (p=.0296) & .2247 \\
+							&						& nMCI & 3.474 & 0.054  & & & 3.626 & 0.073 & & \\
+							&						& Cont & 3.705 & 0.042  & & & 3.745 &0.045  & & \\						
+	\hline
+	\multirow{6}{*}{V(mm$^3$)} \T & \multirow{3}{*}{Male} & aMCI\T & 10345 &188 & YrsEd(p=.0010) & .0652 & 11022	& 246	& YrsEd(p=.0478) & .1318 \\
+							&						& nMCI &9928 &410  & ICV(p=$<$.0001)& & 11667&345 & ICV(p=$<$.0001) & \\
+							&						& Cont &10651 &175  & 		& &11509&205 & & \\\cline{2-11}
+							&	\multirow{3}{*}{Female}	& aMCI\T &8602	 & 205 & ICV(p=$<$.0001) & \textbf{.0209} & 9687&271 & ICV(p=$<$.0001) & .0963 \\
+							&						& nMCI &9115 & 220 & Age:Diag(p=.0209) & & 10144 & 300 & 		& \\
+							&						& Cont &9787 &134  & & & 10156 & 145	& 		&  \\
+
+	\hline
+	\multirow{6}{*}{S(mm$^2$)} \T & \multirow{3}{*}{Male} & aMCI\T &3661.2 &51.8 & ICV(p=$<$.0001) & \textbf{.0020}&4050.1	 &61.5  & Age(p=.0445) & \textbf{.0067}  \\
+							&							& nMCI & 3643.2	& 95.6	& YrsEd:Diag(p=.0060) & &4092.7 & 76.3 & ICV(p=$<$.0001) & \\
+							&						& Cont & 3818.8	&50.3	& 		&  & 4219.7	& 47.9& & \\\cline{2-11}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 3244.0	&51.0	 & ICV(p=$<$.0001) & \textbf{.0052} & 3566.4	&64.9 & Age(p=.0016)& .3579 \\
+							&						& nMCI & 3316.8	&62.4 & Age:Diag(p=.0031) & &3601.2	 & 62.7	 & ICV(p=$<$.0001) 		& \\
+							&						& Cont & 3350.3& 35.0& 		& & 3613.2	& 33.1	& 		& \\
+	\hline \hline
+	\textbf{MTG} & \multirow{3}{*}{Male} & aMCI\T & 4.021 & 0.070 & & & 3.962 & 0.070 & YrsEd(p=.0480) & \\
+							&						& nMCI & 4.195 & 0.107 & ICV(p=.0311)& .3136 & 4.169 & 0.090 & ICV(p=.041) & .2869 \\
+	\multirow{2}{*}{T(mm)}						&						& Cont & 3.977 & 0.068 & & & 4.003 & 0.046 & &\\\cline{2-11}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 3.886 & 0.110 &  & & 3.999 & 0.078 & & \\
+							&						& nMCI & 3.913 & 0.070 & Age(p=.0012)& \textbf{.0195} & 4.003 & 0.063 & Age(p=.0003) & .1046 \\
+							&						& Cont & 4.110 & 0.049 & & & 4.136 & 0.046 & & \\
+	\hline
+	\multirow{6}{*}{V(mm$^3$)} & \multirow{3}{*}{Male} & aMCI\T & 10716 & 211 & YrsEd(p=.032)&  & 9901 & 246 & ICV(p$<$.0001) &  \\
+							&						& nMCI & 10201 & 509 & ICV(p$<$.0001) & .5870 & 11071 & 383 & Age:Diag(p=.0021) & \textbf{.0064} \\
+							&						& Cont & 10473 & 197 & & & 10656 & 176 & & \\\cline{2-11}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 8984 & 255 &  &   & 8949 & 276 & ICV(p$<$.0001)&  \\
+							&						& nMCI & 9373 & 232 & ICV(p$<$.0001) & \textbf{.0001} & 9431 & 243 & & .0566\\
+							&						& Cont & 10012 & 134 & & & 9413 & 136 & & \\
+	\hline
+	\multirow{6}{*}{S(mm$^2$)} & \multirow{3}{*}{Male} & aMCI\T & 2889.8 & 62.9 & ICV(p$<$.0001) &  & 2704.9 & 62.1 & Age(p=.0006) &\\
+							&						& nMCI & 2824.7 & 111.3 & YrsEd:Diag(p=.0143) & .1727  & 2862.5 & 92.3 & ICV(p$<$.0001) & \textbf{.0105}\\
+							&						& Cont & 2951.4 & 53.4 & &  & 2924.7 & 53.2 & &  \\\cline{2-11}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 2565.9 & 70.5 & ICV(p$<$.0001) &  & 2394.5 & 58.2 & Age(p=.0250) & \\
+							&						& nMCI & 2595.5 & 57.9 & Age:Diag(p=.0054) & .2048  & 2453.0 & 54.2 & ICV=$<$.0001 & .2478\\
+							&						& Cont & 2612.2 & 33.5 & & & 2441.3 & 32.0 & &\\
+	
+	\end{tabular}
+	\caption{\textbf{STG and MTG Measures}.  Statistics for each geometric feature of the STG and MTG.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
+	\label{Wave1.STG.MTG.ANCOVA}
+\end{sidewaystable}
+
+\newpage
+\begin{sidewaystable}[h]
+	\centering
+	\footnotesize
+	\begin{tabular}{l|rr|rrrr|rr}
+	\hline
+	& & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{c|}{Left} & & \\
+	\multicolumn{1}{l|}{Parameter} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
+	\hline\hline
+	\multirow{6}{*}{T(mm)} & \multirow{3}{*}{Male} & aMCI\T & 4.608 & 0.076 & 4.490 & 0.085 & & \\
+							&						& nMCI & 4.628 & 0.123 & 4.622 & 0.130 & & \\
+							&						& Cont & 4.516 & 0.063 & 4.457 & 0.054 & Hemi(p=.0007) & \\\cline{2-7}	
+							&	\multirow{3}{*}{Female}	& aMCI\T & 4.569 & 0.105 & 4.454 & 0.099 & ICV(p=.0091) & .9238 \\
+							&						& nMCI & 4.530 & 0.083 & 4.423 & 4.423 & Age(p=.0007) & \\
+							&						& Cont & 4.639 & 0.051 & 4.548 & 0.051 & & \\
+	\hline
+	\multirow{6}{*}{V(mm$^3$)} & \multirow{3}{*}{Male} & aMCI\T & 8257 & 234 & 9186 & 312 & &  \\
+							&						& nMCI & 7506 & 386 & 9273 & 415 & & \\
+							&						& Cont & 8386 & 174 & 9330 & 168 & Hemi(p$<$.0001) & \\\cline{2-7}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 7004 & 222 & 8407 & 326 & YrsEd:Diag(p=.0038) & .0816 \\
+							&						& nMCI & 7394 & 235 & 8276 & 331 & ICV(p$<$.0001) & \\
+							&						& Cont & 7625 & 130 & 8394 & 124 & & \\
+
+	\hline
+	\multirow{6}{*}{S(mm$^2$)} & \multirow{3}{*}{Male} & aMCI\T & 2528.2 & 73.4 & 2720.2 & 81.6 & & \\
+							&						& nMCI & 2457.3 & 107.5 & 2598.3 & 93.1 & Hemi(p$<$.0001) & \\
+							&						& Cont & 2666.5 & 50.1 & 2788.3 & 48.3 & Age(p=.0273) & \\\cline{2-7}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 2207.2 & 70.5 & 2418.4 & 80.0 & ICV(p$<$.0001)& \textbf{.0490}\\
+							&						& nMCI & 2237.4 & 56.6 & 2365.3 & 72.0 & YrsEd:Diag(p=.0003)&\\
+							&						& Cont & 2260.2 & 38.3 & 2414.4 & 36.0 & & \\
+	\end{tabular}
+	\caption{\textbf{ITG Statistics}.  Statistics for each geometric feature of the ITG and ANCOVA results showing significant diagnostic correlations.}
+	\label{Wave1.ITG.ANCOVA}
+\end{sidewaystable}
+
+\newpage
+\begin{table}[p]
+	\centering
+	\footnotesize
+	\begin{tabular}{l|rr|rrrr|rr}
+	\hline
+	& & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{c|}{Left} & & \\
+	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
+	\hline\hline
+	\textbf{Anterior} & \multirow{3}{*}{Male} & aMCI\T & 3.800 & 0.071 & 3.860 & 0.087 & & \\
+	\textbf{Cingulate}						&						& nMCI & 3.782 & 0.118 & 3.924 & 0.123 & Age(p=.0409) & .0826 \\
+	\multirow{2}{*}{T(mm)}						&						& Cont & 3.652 & 0.042 & 3.666 & 0.051 & & \\ \cline{2-9}						
+							&	\multirow{3}{*}{Female}	& aMCI\T & 3.706 & 0.083 & 3.810 & 0.097 & & \\
+							&						& nMCI & 3.655 & 0.074 & 3.718 & 0.068 & Age(p=.0257) & .5138 \\
+							&						& Cont & 3.762 & 0.043 & 3.801 & 0.046 & ICV:Diag(p=.0053) & \\
+	\hline
+	\multirow{6}{*}{V(mm$^3$)} & \multirow{3}{*}{Male} & aMCI\T & 3632 & 102 & 3767 & 114 & &   \\
+							&						& nMCI & 3740 & 226 & 3999 & 162 & Age(p=.0330) & .4930 \\
+							&						& Cont & 3747 & 80 & 3794 & 67 & ICV(p=.0059) & \\\cline{2-9}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 3309 & 114 & 3238 & 95 & & \\
+							&						& nMCI & 3219 & 89 & 3277 & 97 & ICV(p$<$.0001) & \textbf{.0073}\\
+							&						& Cont & 3379 & 65 & 3561 & 69 & Age:Diag(p=.0386) & \\
+	\hline
+	\multirow{6}{*}{S(mm$^2$)} & \multirow{3}{*}{Male} & aMCI\T & 1138.4 & 32.6 & 1186.2 & 33.7 & & \\
+							&						& nMCI & 1137.4 & 50.8 & 1202.2 & 37.2 &  ICV(p$<$.0001) & .5067 \\
+							&						& Cont & 1145.7 & 21.0 & 1207.9 & 19.7 & Hemi(p$<$.0011) & \\\cline{2-9}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 1019.5 & 31.0 & 1050.8 & 29.0 & &\\
+							&						& nMCI & 995.0 & 32.5 & 1022.4 & 27.7 & ICV(p$<$.0001) & .2960\\
+							&						& Cont & 1009.2 & 17.5 & 1080.3 & 20.7 & Hemi(p=.0013) & \\
+	\hline\hline
+	\textbf{Posterior}  & \multirow{3}{*}{Male} & aMCI\T & 3.681 & 0.046 &3.672 & 0.049 & & \\
+	\textbf{Cingulate}						&						& nMCI & 3.686 & 0.051 & 3.660 & 0.066 & ICV(p=.0088) & .9091 \\
+		\multirow{2}{*}{T(mm)}					&						& Cont & 3.694 & 0.032 & 3.702 & 0.031 & & \\	\cline{2-9} 				
+							&	\multirow{3}{*}{Female}	& aMCI\T & 3.605 & 0.063 & 3.512 & 0.058 & Age(p=.0336) &  \\
+							&						& nMCI & 3.600 & 0.044 & 3.599 & 0.041 & ICV(p=.0028)& .0744\\
+							&						& Cont & 3.709 & 0.027 & 3.642 & 0.028 & Hemi(p=.0010) & \\
+	\hline
+	\multirow{6}{*}{V(mm$^3$)} & \multirow{3}{*}{Male} & aMCI\T & 4478 & 117 & 4451 & 105 & ICV(p$<$.0001) &  \\
+							&						& nMCI & 4840 & 198 & 5053 & 253 & Age(p=.0002) & \textbf{.0235} \\
+							&						& Cont & 4606 & 88 & 4658 & 92 &  & \\ \cline{2-9}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 4158 & 147 & 3981 & 114 & ICV(p$<$.0001) & \\
+							&						& nMCI & 4082 & 110 & 3899 & 102 & Age:Diag(p=.0448) & \textbf{.0253} \\
+							&						& Cont & 4201 & 66 & 4174 & 52 & & \\
+	\hline
+	\multirow{6}{*}{S(mm$^2$)} & \multirow{3}{*}{Male} & aMCI\T & 1821.1 & 32.5 & 1825.4 & 34.4 & YrsEd:Diag(p=.0101) & \\
+							&						& nMCI & 1866.3 & 41.0 & 1937.2 & 59.6 & ICV(p$<$.0001) & .0520 \\
+							&						& Cont & 1851.6 & 24.8 & 1883.1 & 26.8 &  & \\\cline{2-9}
+							&	\multirow{3}{*}{Female}	& aMCI\T & 1639.3 & 30.7 & 1666.3 & 37.6 & ICV(p$<$.0001) & \\
+							&						& nMCI & 1633.6 & 26.6 & 1578.8 & 33.0 & Age(p=.0073) & .5360\\
+							&						& Cont & 1647.7 & 17.1 & 1636.7 & 15.8 &  YrsEd(p=.0011)& \\
+							&						& & & & & & YrsEd:Diag(p$<$.0011) & \\
+							&						& & & & & & Age:Diag(p=.0031) & \\								
+	\end{tabular}
+	\caption{\textbf{Cingulate Statistics}.  Statistics for each geometric feature of the antcing and postcing and ANCOVA results showing significant diagnostic correlations.}
+	\label{Wave1.cing.ANCOVA}
+\end{table}
+
+\newpage
+\begin{sidewaystable}
+	\centering
+	\footnotesize
+	\begin{tabular}{rr|rrr|rrr|rrr}
+		\hline
+		\multicolumn{2}{c|}{Region} \T\B & \multicolumn{3}{c|}{KS test} & \multicolumn{3}{c|}{MWU test} & \multicolumn{3}{c}{Welch's t-test} \\
+		& & two-sided & less & greater & two-sided & greater & less & two-sided & greater & less \\ \hline
+		& aMCI vs norm\T & $<$.0001 & .0832 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		rh stg & nMCI vs norm & $<$.0001 & $<$.0001 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI\T & $<$.0001 & .5210 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
+		& aMCI vs norm & $<$.0001 & .9794 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		lh stg & nMCI vs norm & $<$.0001 & .9983 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & $<$.0001 & .0128 & .0064  & .9936 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & $<$.0001 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		rh stg & nMCI vs norm & $<$.0001 & .0121 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		(women)& aMCI vs nMCI & $<$.0001 & $<$.0001 & .0086 & .1065 & .0533 & .9467 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & .9989 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		lh stg & nMCI vs norm & $<$.0001 & .9998 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		(women)& aMCI vs nMCI & $<$.0001 & $<$.0001 & .0032 & .0060 & .0030 & .9970 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & .0396 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		rh mtg & nMCI vs norm & $<$.0001 & $<$.0001 & $<$.0001 & .5428 & .7286 & .2714 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & .4099 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		lh mtg & nMCI vs norm & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1  & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & .0296 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
+		& aMCI vs norm\T &  $<$.0001 & $<$.0001 & $<$.0001 & .5723 & NA & NA & .8289 & NA & NA \\
+		rh itg & nMCI vs norm & $<$.0001 & $<$.0001 & .7620 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
+		& aMCI vs nMCI & $<$.0001 & .5502 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
+		& aMCI vs norm\T &  $<$.0001 & .8740 & $<$.0001 &  $<$.0001 & 1 & $<$.0001 &  $<$.0001 & 1 & $<$.0001 \\
+		lh itg & nMCI vs norm & $<$.0001 & .7938 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & .8740 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+	\end{tabular}
+	\caption{\textbf{Temporal Lobe Pooled LCDM Analysis Results.}  Showing p-values obtained from nonparametric distribution tests.}
+	\label{Wave1.TL.nonpara}
+\end{sidewaystable}
+
+\newpage
+\begin{sidewaystable}
+	\centering
+	\footnotesize
+	\begin{tabular}{rr|rrr|rrr|rrr}
+		\hline
+		\multicolumn{2}{c|}{Region} \T\B & \multicolumn{3}{c|}{KS test} & \multicolumn{3}{c|}{MWU test} & \multicolumn{3}{c}{Welch's t-test} \\
+		& & two-sided & less & greater & two-sided & greater & less & two-sided & greater & less \\ \hline
+		& aMCI vs norm\T &  $<$.0001 & $<$.0001 & .9896 &  $<$.0001 & $<$.0001 & 1 &  $<$.0001 & $<$.0001 & 1 \\
+		rh antcing & nMCI vs norm & .0047 & .0024 & .9696 & .0496 & .0248 & .9752 & .0463 & .0232 & .9768 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9986 & $<$.0001 & $<$.0001 & .9986 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & $<$.0001 & .8789 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
+		lh antcing & nMCI vs norm & $<$.0001 & $<$.0001 & .6552 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9725 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & .0001 & $<$.0001 & .0043 & .2136 & .1068 & .8932 & .5986 & .2993 & .7007 \\
+		rh postcing & nMCI vs norm & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9786 & $<$.0001 & $<$.0001 & .9786 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & .9911 & $<$.0001 & $<$.0001 & 1 & $<$.0001  & $<$.0001 & 1 & $<$.0001  \\
+		lh postcing & nMCI vs norm & $<$.0001 & .9971 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .8553 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
+	\end{tabular}
+	\caption{\textbf{Cingulate Gryus Pooled LCDM Analysis Results}   Showing p-values obtained from nonparametric distribution tests.}
+	\label{Wave1.cing.nonpara}
+\end{sidewaystable}
+
+
+\end{document}

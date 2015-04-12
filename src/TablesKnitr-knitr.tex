@@ -1,0 +1,229 @@
+\documentclass[11pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[margin=1in]{geometry}   % set up margins
+\usepackage{enumerate}              % fancy enumerate
+\usepackage{amsmath}                % used for \eqref{} in this document
+\usepackage{verbatim}               % useful for \begin{comment} and \end{comment}
+\usepackage{comment}
+\usepackage[pdftitle={Homework With knitr}, colorlinks=true, linkcolor=blue,
+citecolor=blue, urlcolor=blue, linktocpage=true, breaklinks=true]{hyperref}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+%%%%%%%%%%%%%%%%   Sweave Options  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Tables with \textbf{xtable} and \textbf{knitr}}
+\author{Alan T. Arnholt\\ STT 3851}
+\date{Spring 2012}
+\maketitle
+
+
+
+Here are a few examples using the function \texttt{xtable()} form the \textbf{R} package \texttt{xtable} I used to generate \LaTeX{} code for tabular output without manually entering the values in a tabular environment. To get beyond the basic examples in this document, read the documentation and customize until you are happy.  Consider a table created with \texttt{xtabs()}.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{T1} \hlkwb{<-} \hlkwd{xtabs}\hlstd{(}\hlopt{~} \hlstd{Ease} \hlopt{+} \hlstd{Treatment,} \hlkwc{data} \hlstd{= EPIDURALf)}
+\hlstd{T1}
+\end{alltt}
+\begin{verbatim}
+            Treatment
+Ease         Hamstring Stretch Traditional Sitting
+  Difficult                 63                  51
+  Easy                     100                 107
+  Impossible                 8                  13
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Now we want this to appear in a ``pretty'' format.
+
+% latex table generated in R 3.1.2 by xtable 1.7-4 package
+% Sun Jan 18 20:52:25 2015
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ & Hamstring Stretch & Traditional Sitting \\ 
+  \hline
+Difficult & 63.00 & 51.00 \\ 
+  Easy & 100.00 & 107.00 \\ 
+  Impossible & 8.00 & 13.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+Creating a caption with \texttt{xtable()} for Table \ref{MyT1}.
+% latex table generated in R 3.1.2 by xtable 1.7-4 package
+% Sun Jan 18 20:52:25 2015
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ & Hamstring Stretch & Traditional Sitting \\ 
+  \hline
+Difficult & 63.00 & 51.00 \\ 
+  Easy & 100.00 & 107.00 \\ 
+  Impossible & 8.00 & 13.00 \\ 
+   \hline
+\end{tabular}
+\caption{Table of Something} 
+\label{MyT1}
+\end{table}
+
+
+Consider the regression results below and those shown in Tables \ref{RR} and \ref{RR2}.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mod} \hlkwb{<-} \hlkwd{lm}\hlstd{(gpa} \hlopt{~} \hlstd{sat,} \hlkwc{data} \hlstd{= Grades)}
+\hlstd{SR} \hlkwb{<-} \hlkwd{summary}\hlstd{(mod)}\hlopt{$}\hlstd{coefficients}
+\hlstd{SR}
+\end{alltt}
+\begin{verbatim}
+               Estimate  Std. Error  t value     Pr(>|t|)
+(Intercept) -1.19206381 0.222450180 -5.35879 2.316666e-07
+sat          0.00309427 0.000194465 15.91171 2.922995e-37
+\end{verbatim}
+\begin{alltt}
+\hlstd{AR} \hlkwb{<-} \hlkwd{anova}\hlstd{(mod)}
+\hlstd{AR}
+\end{alltt}
+\begin{verbatim}
+Analysis of Variance Table
+
+Response: gpa
+           Df Sum Sq Mean Sq F value    Pr(>F)    
+sat         1 40.397  40.397  253.18 < 2.2e-16 ***
+Residuals 198 31.592   0.160                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+% latex table generated in R 3.1.2 by xtable 1.7-4 package
+% Sun Jan 18 20:52:25 2015
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & -1.19 & 0.22 & -5.36 & 0.00 \\ 
+  sat & 0.00 & 0.00 & 15.91 & 0.00 \\ 
+   \hline
+\end{tabular}
+\caption{Regression results} 
+\label{RR}
+\end{table}
+
+
+% latex table generated in R 3.1.2 by xtable 1.7-4 package
+% Sun Jan 18 20:52:25 2015
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & -1.1921 & 0.2225 & -5.3588 & 0.0000 \\ 
+  sat & 0.0031 & 0.0002 & 15.9117 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\caption{Regression results with 4 digits} 
+\label{RR2}
+\end{table}
+
+
+% latex table generated in R 3.1.2 by xtable 1.7-4 package
+% Sun Jan 18 20:52:25 2015
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrr}
+  \hline
+ & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
+  \hline
+sat & 1 & 40.40 & 40.40 & 253.18 & 0.0000 \\ 
+  Residuals & 198 & 31.59 & 0.16 &  &  \\ 
+   \hline
+\end{tabular}
+\caption{ANOVA} 
+\label{AR}
+\end{table}
+
+
+Suppose you want the label \texttt{Pr(>F)} in Table \ref{AR} to read $\wp$-value.
+
+% latex table generated in R 3.1.2 by xtable 1.7-4 package
+% Sun Jan 18 20:52:25 2015
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrr}
+  \hline
+ & DOF & Sum Sq & Mean Sq & F value & $\wp$-value \\ 
+  \hline
+sat & 1.00 & 40.40 & 40.40 & 253.18 & 0.00 \\ 
+  Residuals & 198.00 & 31.59 & 0.16 &  &  \\ 
+   \hline
+\end{tabular}
+\caption{ANOVA with $\wp$-value changed} 
+\label{ARpvalue}
+\end{table}
+
+
+\end{document}
