@@ -53,18 +53,29 @@ for region in regions:
 
                     for id in ids:
                         id = id.strip()
-                    #   full_dir_names = os.listdir(wave1_dir1)
+                        full_dir_names = os.listdir(wave1_dir1)
                     #   full_path =  os.path.join(wave1_dir1, x for x in full_dir_names if x.startswith(id), 'FSLCDM_v2.3',region_name,sub_region+'_1_manseg_quartile_pialmsk_AntsyGrey.txt')
                         full_path =  os.path.join(wave1_dir1, id+"*", 'FSLCDM_v2.3',region_name,sub_region+'_1_manseg_quartile_pialmsk_AntsyGrey.txt')
-                        f = glob.glob(full_path)
+                        print full_path
+                        f = glob.glob(str(full_path))
+                        print "file matches for "+id
 
-                        if os.path.exists(f) and os.isfile(f) and os.path.getsize(f)>0:
-                            os.system("cat "+f+" >> "+output_fname)
+                        for file_match in f:
+                          print file_match
+
+                        if  len(f) > 0 and os.path.exists(f[0]) and os.path.isfile(f[0]) and os.path.getsize(f[0])>0:
+                            os.system("cat "+f[0]+" >> "+output_fname)
                         else:
+
                             full_path =  os.path.join(wave1_dir2, id+"*", 'FSLCDM_v2.3', region_name, sub_region+'_1_manseg_quartile_pialmsk_AntsyGrey.txt')
-                            f = glob.glob(full_path)
-                            if os.path.exists(f) and os.isfile(f) and os.path.getsize(f)>0:
-                                os.system("cat "+f+" >> "+output_fname)
+
+                            f = glob.glob(str(full_path))
+                            print "file matches for "+id
+
+                            for file_match in f:
+                              print file_match
+                            if len(f) > 0  and os.path.exists(f[0]) and os.path.isfile(f[0]) and os.path.getsize(f[0])>0:
+                                os.system("cat "+f[0]+" >> "+output_fname)
 
 
                         print id+" added to pooled stats"
