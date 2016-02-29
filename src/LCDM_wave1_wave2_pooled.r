@@ -22,7 +22,7 @@ dists=sapply(distsl,sample,minlength) #for tests requiring same number in group
 
 ######### Simple Summary Statistics ########
 
-pdf(file=paste("wave1_wave2/summarystat_",REGION,"_",DIAG,".pdf",sep=''))
+pdf(file=paste("wave1_wave2/summarystat_",REGION,"_",DIAGs,".pdf",sep=''))
 
 col=c('black','red')
 thk95<-c()
@@ -66,8 +66,8 @@ b[[3]]<-ks.test(distsl[[2]],distsl[[1]],alternative="g",exact=NULL)
 return(b)
 }
 
-file1=paste("/cis/project/sydney/pooled_analysis/pooled_files_wave1wave2/",REGION,"_",DIAG,"_wave1_pooled_antsy.txt",sep="")
-file2=paste("/cis/project/sydney/pooled_analysis/pooled_files_wave1wave2/",REGION,"_",DIAG,"_wave2_pooled_antsy.txt",sep="")
+file1=paste("./pooled_files_wave1wave2/",REGION,"_",DIAGs[1],"_wave1_pooled_antsy.txt",sep="")
+file2=paste("./pooled_files_wave1wave2/",REGION,"_",DIAGs[2],"_wave1_pooled_antsy.txt",sep="")
 
 fileNames=c(file1,file2)
 
@@ -84,7 +84,7 @@ out<-LCDM(fileNames,condTests,REGION)
 
 ### write results into file ###
 
-OUTFILE=paste("/cis/project/sydney/pooled_analysis/wave1_wave2/result_",REGION,"_",DIAG,".txt",sep='')
+OUTFILE=paste("./results/Pooled_test_results_",REGION,"_",DIAGs,".txt",sep='')
 
 #cat("Statistical Summary for ",REGION,"\n",file=OUTFILE)
 

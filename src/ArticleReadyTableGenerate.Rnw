@@ -1,0 +1,722 @@
+\documentclass[12pt]{article}
+
+\usepackage{listings}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\pgfplotsset{compat=1.10}
+\usepackage[hang,footnotesize,bf,margin=.5in]{caption}
+\usepackage{epstopdf}
+\usepackage[indention=10pt,singlelinecheck=false]{subfig}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage[top=1in, bottom=1.3in, left=.7in, right=.7in, paperwidth=8.5in, paperheight=11in]{geometry}
+\usepackage{setspace}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{pdfpages}
+\usepackage[style=numeric,url=false,isbn=false,doi=false,maxnames=30,natbib=true, uniquename=init,firstinits]{biblatex}
+\AtEveryBibitem{%
+  \clearfield{day}%
+  \clearfield{month}%
+  \clearfield{endday}%
+  \clearfield{endmonth}%
+}
+\DeclareNameAlias{default}{last-first}
+\renewbibmacro{in:}{}
+\setlength{\footskip}{24pt}
+\newcommand{\hilight}[1]{\colorbox{yellow}{#1}}
+\newcommand\T{\rule{0pt}{2.6ex}}
+\newcommand\B{\rule[-1.2ex]{0pt}{0pt}}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,arrows}
+
+\bibliography{library,library_added}
+
+\begin{document}
+
+%\SweaveOpts{concordance=TRUE}
+
+
+<<LoadData_and_BasicDataMunge,echo=FALSE,results='hide',warning=FALSE, message=FALSE>>=
+# Load Data
+library(foreign)
+library(dplyr)
+library(xtable)
+HOME_DIR <- Sys.getenv("HOME")
+print(HOME_DIR)
+setwd(HOME_DIR)
+setwd("./projects/MAS_Score_Analysis")
+#setwd( paste0(Sys.getenv("HOME"),"/projects/MAS_Score_Analysis/"))
+#The script gets data from  SPSS files, merges data frames to one data frame
+source("./src/MAS_MCIsubtype_analysis.R")
+all.df<- droplevels(all.df)
+
+all.var.names<- names(all.df)
+all.var.names[all.var.names=="W1_subclass"] <- "Diag"
+all.var.names[all.var.names=="W1_Ed_year"] <- "YrsEd"
+names(all.df)<- all.var.names
+all.df$Wave1 <- !is.na(all.df$ICV_W1)
+grouping_gender_diag <- group_by(all.df[all.df$Wave1, ], Diag,sex)
+print (paste0(sum(all.df$Wave1), "  patients summarized"))
+# create a table of summary statistics
+summary_table_1.df  <- summarize (grouping_gender_diag, Number= n(), mean_age=mean(age,na.rm=T), sd_age=sd(age,na.rm=T), 
+           mean_ed_dur =mean(YrsEd,na.rm=T), sd_ed_dur= sd(YrsEd,na.rm=T) )
+summary_table_1.df <- arrange(summary_table_1.df,Diag,sex)
+
+@
+
+\begin{table}[t]
+  \centering
+	\begin{tabular}{rrrrrrr}
+		\hline
+		Diag \T& Gender & Number & \multicolumn{2}{c}{Age (Yrs)} & \multicolumn{2}{c}{YrsEd (Yrs)} \\
+		& \B & & Mean & SD & Mean & SD \\ \hline
+<<Table_1_summarystats, results='asis', eval=TRUE,echo=FALSE>>=
+  class(summary_table_1.df)<-"data.frame"
+  table.out <- xtable(summary_table_1.df)
+  print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE)
+  @
+
+	\end{tabular}
+	\caption{\textbf{Summary of data used for MCI analysis}.  Summary statistics on the number, age, and years of education of individuals used for the analysis.  Data broken down based on gender and diagnosis.}
+	\label{wave1data}
+\end{table}
+
+<<diag.plot.ICV_1,fig.show='hide',results='asis',echo=FALSE>>=
+#Gender, age, ICV, ED.year, hemisphere
+library(ggplot2)
+library(reshape2)
+# Convert all.df to long format
+#
+all.df.lf<- melt(all.df[all.df$Wave1,], id.var=c(1,2,8,9,10,71),
+                 measure.vars=11:40, value.name="LCDM.measure",variable.name="hemi.region.subregion.meas")
+
+num.records <- nrow(all.df.lf)
+all.df.lf$hemi <- substr(all.df.lf$hemi.region.subregion.meas,1,2)
+
+all.df.lf$lcdm.stat.string <- strsplit(as.character(all.df.lf$hemi.region.subregion.meas),split="_")
+all.df.lf$region <-rep("",num.records)
+all.df.lf$aggstat <-rep("",num.records)
+
+for (i in 1:num.records){
+  all.df.lf$region[i] <-all.df.lf$lcdm.stat.string[[i]][2]
+  all.df.lf$aggstat[i] <-all.df.lf$lcdm.stat.string[[i]][3]
+
+}
+agg.stats.names <- unique(all.df.lf$aggstat)
+
+
+  fig.1<-qplot(data=all.df.lf[all.df$Wave1,],x=ICV_W1,y=LCDM.measure,color=hemi.region.subregion.meas)+facet_grid(aggstat~hemi,scales="free")
+
+print(fig.1)
+
+# plotting  LCDM statistic vs ICV for each statistic (thickness, surface area, volume) for each region/subregion, we ge a plot that shows there does not seem to be significantly positive slope for any of the measures and the conditional correlation between ICV and the measure (given the class) is weak. 
+#TODO :   condition  on the class label here.
+@
+
+
+<<ICVStats,eval=TRUE,error=TRUE,echo=FALSE>>=
+require(car)
+aov.fit<- lm(ICV_W1~YrsEd+age+sex+Diag,data=all.df)
+aov.result.type3 <- Anova(aov.fit,type="III")
+aov.result <- aov(aov.fit)
+# Does ICV show a trend level  group difference (Is p-value for Diag sig?)
+print("ICVStats ANOVA with covars")
+print(aov.result.type3)
+
+
+
+# Does ICV show a trend level  group difference (Is p-value for Diag sig?)
+print("ICVStats ANOVA")
+print(aov.result)
+
+# Result shows Diag is not significant and can be not included in the rest of the analysis
+@
+
+<<ICVStats_plot,  eval=TRUE,echo=FALSE>>=
+summary_table_2.df  <- summarize (grouping_gender_diag, mean_ICV=mean(ICV_W1,na.rm=T), sd_ICV=sd(ICV_W1,na.rm=T))
+
+summary_table_2.df.m <- filter(summary_table_2.df,sex=="Male")
+summary_table_2.df.f <- filter(summary_table_2.df,sex=="Female")
+print.table.df <- select(summary_table_2.df.m,Diag,mean_ICV,sd_ICV)
+class(print.table.df) <- "data.frame"
+print.table2.df<-select(summary_table_2.df.f,Diag,mean_ICV,sd_ICV)
+class(print.table2.df) <- "data.frame"
+
+
+aov.result.summary <- summary(aov.result)
+if (!is.data.frame(aov.result.summary)){
+aov.result.summary  <- aov.result.summary[[1]]
+}
+print(table.out, include.rownames=FALSE,include.colnames=TRUE)
+
+p_vals <- formatC(aov.result.summary$`Pr(>F)` [1:3], digits = 3,drop0trailing=TRUE)
+print (aov.result.summary)
+Covariate_names <- rownames(aov.result.summary)[1:3]
+print(str(aov.result.summary))
+print(Covariate_names)
+cov_column <- paste(Covariate_names,"(p = ",p_vals,")",sep="")
+cov_column <- c(cov_column,rep("",2))
+cov_column_2 <-c ("", paste("p = ",aov.result.summary$`Pr(>F)` [4],")",sep=""),"")
+cov_column_2 <- c(cov_column_2,rep("",2))
+
+cov_test_cols<-data.frame(Covariate=cov_column,p.value=cov_column_2)
+table.out<-xtable(cbind(print.table.df,print.table2.df[,2:3],cov_test_cols))
+  
+@
+
+
+
+\newpage
+\begin{table}[h]
+	\centering
+	\footnotesize
+	\begin{tabular}{rrrrrrrr}
+	\hline
+	Diag\T & \multicolumn{2}{c}{Male} & \multicolumn{2}{c}{Female} & & &  \\
+      	&  Mean & SE                & Mean & SE                  & Covariates & p-value & \\ \hline
+<<Table_2_ICV_summarystats, results='asis', eval=TRUE,echo=FALSE>>=
+  #class(summary_table_1.df)<-"data.frame"
+  #table.out <- xtable(summary_table_1.df)
+  print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE)
+  @
+  \end{tabular}
+	\caption{\textbf{ICV Statistics}.  ANCOVA results for ICV.}
+	\label{Wave1.ICV.stats}
+\end{table}
+
+<<subregion_sideway_table_summary_stats,eval=TRUE,echo=FALSE>>=
+stat.tables.for.regions <- list()
+summ.stats.tables<-list(stg=list(),mtg=list(),itg=list(),postcing=list(),antcing=list())
+for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
+  all.df.lf.stg    <- filter(all.df.lf, region==region.for.table)
+  
+  
+  all.df.lf.stg.lh <- filter(all.df.lf.stg,hemi=="lh")
+  all.df.lf.stg.rh <- filter(all.df.lf.stg,hemi=="rh")
+  
+  all.df.lf.stg.lh.grp<- group_by(all.df.lf.stg.lh, aggstat, sex,Diag)
+  all.df.lf.stg.rh.grp<- group_by(all.df.lf.stg.rh, aggstat, sex,Diag)
+  
+  summary_table_3.df.lh  <- summarize (all.df.lf.stg.lh.grp, mean_measure=mean(LCDM.measure,na.rm=T), sd_measure=sd(LCDM.measure,na.rm=T))
+  summary_table_3.df.rh  <- summarize (all.df.lf.stg.rh.grp, mean_measure=mean(LCDM.measure,na.rm=T), sd_measure=sd(LCDM.measure,na.rm=T))
+  
+  
+  print.table.lh.df <- select(summary_table_3.df.lh ,sex, Diag,mean_measure,sd_measure)
+  class(print.table.lh.df) <- "data.frame"
+  
+  
+  print.table.rh.df<-select(summary_table_3.df.rh,sex, Diag,mean_measure,sd_measure)
+  class(print.table.rh.df) <- "data.frame"
+  
+  summ.stats.tables[[region.for.table]] <- list(lh=print.table.lh.df,
+                                              rh= print.table.rh.df)
+  
+}
+print(str(summ.stats.tables))
+@
+
+<<ANOVA_Diagnostic_Analysis, echo=FALSE,eval=FALSE>>=
+
+source("./../lib/setupAnova.r")
+
+require(car)
+options(contrasts=c("contr.sum", "contr.poly"))
+for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
+  for (measure.name in agg.stats.names){
+print("==============================")
+print(paste0("Diagnostics for Subregion = ",region.for.table," ",
+             measure.name ))
+all.df.lf.stg    <- filter(all.df.lf, region==region.for.table & aggstat==measure.name)
+all.df.lf.stg <- setupAnova(all.df.lf.stg)
+
+p.cutoff = 0.05
+aov.fit.init <- lm(LCDM.measure~hemi*Diag,data=all.df.lf.stg)
+aov.result   <-Anova(aov.fit.init,type="III")
+
+print("hemisphere sig. test")
+print(aov.result)
+
+print("both hemis combined ANOVA")
+ aov.fit.init<- lm(LCDM.measure~(cYrsEd+cage+sex)*Diag,data=all.df.lf.stg)
+      aov.result <-Anova(aov.fit.init,type="III")
+print(aov.result)
+
+
+
+#print("repeated meas. hemis ANOVA")
+#Diagnostic Analysis
+ #aov.fit.init<- lm(LCDM.measure~(YrsEd+age+sex+1)*Diag+
+#                      Error(hemi/((YrsEd+age+sex)*Diag))
+#                    ,data=all.df.lf.stg)
+#aov.result <-Anova(aov.fit.init,type="III")
+#print(aov.result)
+
+for (sex.var in c( "Male","Female")){
+  aov.fit.init.sep.hemi<- lm(LCDM.measure~(cYrsEd+cage)*Diag,data=all.df.lf.stg, subset =  (sex==sex.var))
+  aov.result <-Anova(aov.fit.init.sep.hemi,type="III")
+      
+  print(paste0("gender: ",sex.var))
+  print(aov.result)
+}
+}
+}
+@
+
+
+% For STG, non-significant for SA,vol,thickness 
+% in hemi*Diag stat test, 
+% combine hemispheres
+% sex:Diag interaction is significant for thickness and Vol
+% separate based on gender
+
+% For MTG, not significant in hemi*Diag stat test, 
+% combine data from hemi
+
+% significant sex:Diag for all Thickness, vol, SA 
+%  so  separate female, male
+
+% For ITG,   
+% 
+% no significance in \textit{hemi:Diag} test, 
+% combine hemispheres
+% significant sex:Diag in ITG vol
+% separate female, male
+
+
+% For postcing, the interaction  term is significant in hemi*Diag stat test, 
+% (separate hemisphere)(only for thickness)
+% significant  sex:Diag for postcing vol, so separate female, male
+
+
+% For antcing,  nonsignificant in hemi*Diag stat test, 
+% so combine hemi
+
+
+% significant hemi:sex:Diag in thickness,volume , so separate female, male
+
+<<ezAnova_tests,echo=FALSE,message=FALSE,eval=FALSE>>=
+#print(names(all.df.lf.stg))
+#str(all.df.lf.stg$ID)
+require(ez)
+#ez.anova <- ezANOVA(all.df.lf.stg, dv=.(LCDM.measure), wid=.(ID),
+#                    within=.(hemi), between=.(YrsEd,age,sex,Diag))
+for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
+  for (measure.name in agg.stats.names){
+    
+print(paste0("Diagnostics for Subregion = ",region.for.table," ",
+             measure.name ))
+    all.df.lf.stg    <- filter(all.df.lf, region==region.for.table & aggstat==measure.name)
+all.df.lf.stg <- setupAnova(all.df.lf.stg)
+
+ez.anova <- ezANOVA(all.df.lf.stg, dv=.(LCDM.measure), wid=.(ID),
+                   within=.(hemi),
+         between=.(Diag,sex),between_covariates=.(cage,cYrsEd),
+         detailed=TRUE, type=3)
+print(ez.anova)
+  }
+}
+
+@
+%ezANOVA  diagnostics (with hemi as repeated measure/within_covariate)
+%  STG   Thickness
+%  STG   Vol
+%  STG    SurfArea
+% No Diag:hemi interaction , so combine hemispheres use Hemi as a covariate
+% Sex:Diag interaction so separate genders
+
+%  MTG   Thickness
+%  MTG   Vol
+%  MTG    SurfArea
+
+%  ITG   Thickness
+%  ITG   Vol
+%  ITG    SurfArea
+
+
+
+
+%  postcing   Thickness   -->  only  one where Diag:hemi interaction is significant . Use separate hemisphere for all postcing
+%  postcing   Vol
+%  postcing    SurfArea
+
+%  antcing   Thickness
+%  antcing   Vol
+%  antcing    SurfArea
+
+
+<<SidewayTable_Creator,echo=FALSE>>=
+  #diag.list<-unique(all.df.lf.stg$Diag)
+diag.list<-c("normal","aMCI","nMCI","amdMCI","nmdMCI")
+for (region.for.table in c("stg" ,"mtg","itg","antcing")){
+#  region.for.table="stg"
+  print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh 
+  print.table.rh.df <-summ.stats.tables[[region.for.table]]$rh
+
+  all.df.lf.stg  <- filter(all.df.lf, region==region.for.table)
+  aov.test.results <- data.frame(sex=character(0),aggstat=character(0),Diag=character(0),Covariates=character(0),p_values= numeric(0))
+    
+    for (agg.stat.name in agg.stats.names){
+      covar.col.all.sex <-c()
+      pval.col.all.sex <-c()
+      for (sex.var in c( "Male","Female")){
+        
+        aov.fit<- lm(LCDM.measure~(YrsEd+age+hemi)*Diag,
+                     data=all.df.lf.stg,
+                      subset=(sex==sex.var)&(aggstat==agg.stat.name))
+        aov.result <- Anova(aov.fit,type=3)
+        
+        if (is.data.frame(aov.result)){
+        p.vals <- aov.result$`Pr(>F)`
+        } else {
+          aov.result <- aov.result[[1]]
+        p.vals <- aov.result$`Pr(>F)`
+        }
+        # remove the intercept term regardless of significance
+        p.vals[1]<-1
+        #the last p.value is always NA
+        p.vals[length(p.vals)]<-1
+        
+        
+        var.names <- rownames(aov.result)
+        var.names <-  gsub(" ","",var.names)
+        names(p.vals)<- var.names
+        p.value.for.Diag <- p.vals["Diag"]
+        
+        p.vals["Diag"] <- 1
+        
+        num.sig.vars <- sum(p.vals<p.cutoff)
+        
+        
+        
+        if (num.sig.vars>0) {
+          
+          sig.var.names <- var.names[p.vals<p.cutoff]
+          sig.var.pvals <- p.vals[p.vals<p.cutoff]
+          sig.var.pvals <- formatC(sig.var.pvals, digits = 3,drop0trailing=TRUE)
+          sig.covar.table.col <- paste(sig.var.names,"(p = ", sig.var.pvals ,")",sep="")          
+        }
+                
+               
+        covar.col <- rep("",5)
+        pval.col <- rep("",5)
+        if (num.sig.vars==0) {
+          covar.col[1]<- "None"
+        } 
+        else {
+          covar.col[1:num.sig.vars] <- sig.covar.table.col
+          covar.col[(num.sig.vars+1):5]<-""
+        }
+        p.vals <- formatC(p.vals, digits = 3,drop0trailing=TRUE)
+        pval.col[1]  <-  formatC(p.value.for.Diag, digits = 3,drop0trailing=TRUE)
+        unit.block <- data.frame(sex=sex.var,aggstat=agg.stat.name, Diag=diag.list ,Covariates=covar.col,p_values= pval.col)
+        aov.test.results <- rbind(aov.test.results,unit.block)
+        covar.col.all.sex <- c(covar.col.all.sex,covar.col)
+        pval.col.all.sex  <- c(pval.col.all.sex,pval.col)
+      }  
+    }
+    print(covar.col.all.sex )
+    print(pval.col.all.sex )
+    print.table.df <- merge(print.table.rh.df,print.table.lh.df,
+                        by = c("aggstat","sex","Diag"),sort=FALSE)
+    print.table.merged.df<- merge(print.table.df, aov.test.results,
+                                    by = c("aggstat","sex","Diag"),
+                                  sort=FALSE )
+      
+  
+  new.table <- list(print.table.merged.df)
+  names(new.table ) <- region.for.table
+  stat.tables.for.regions <- c(stat.tables.for.regions ,new.table)
+}
+@
+<<SidewayTable_Creator_postcing,echo=FALSE,eval=TRUE>>=
+# Separate hemispheres only for postcing
+# Separate based on gender for all
+# Ideally the separation based on gender  would be done 
+# on a  measure(SA, vol,thickness) basis
+#for (region.for.table in c("stg" ,"mtg","itg",,"antcing")){
+region.for.table<- "postcing"
+print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh 
+  print.table.rh.df <-summ.stats.tables[[region.for.table]]$rh
+  all.df.lf.stg  <- filter(all.df.lf, region==region.for.table)
+  for (hemi.var in c( "lh","rh")){
+    aov.test.results <- data.frame(sex=character(0),aggstat=character(0),Diag=character(0),Covariates=character(0),p_values= numeric(0))
+    
+    for (agg.stat.name in agg.stats.names){
+      covar.col.all.sex <-c()
+      pval.col.all.sex <-c()
+      for (sex.var in c( "Male","Female")){
+        
+        aov.fit<- lm(LCDM.measure~YrsEd*age*Diag,data=all.df.lf.stg,
+                      subset=(hemi==hemi.var)&(sex==sex.var)&(aggstat==agg.stat.name))
+        aov.result <- Anova(aov.fit,type=3)
+        
+        if (is.data.frame(aov.result)){
+        p.vals <- aov.result$`Pr(>F)`
+        } else {
+          aov.result <- aov.result[[1]]
+        p.vals <- aov.result$`Pr(>F)`
+        }
+        # remove the intercept term regardless of significance
+        p.vals[1]<-1
+        #the last p.value is always NA
+        p.vals[length(p.vals)]<-1
+        
+        
+        var.names <- rownames(aov.result)
+        var.names <-  gsub(" ","",var.names)
+        names(p.vals)<- var.names
+        p.value.for.Diag <- p.vals["Diag"]
+        
+        p.vals["Diag"] <- 1
+        
+        num.sig.vars <- sum(p.vals<p.cutoff)
+        
+        
+        
+        if (num.sig.vars>0) {
+          
+          sig.var.names <- var.names[p.vals<p.cutoff]
+          sig.var.pvals <- p.vals[p.vals<p.cutoff]
+          sig.var.pvals <- formatC(sig.var.pvals, digits = 3,drop0trailing=TRUE)
+          sig.covar.table.col <- paste(sig.var.names,"(p=", sig.var.pvals ,")")          
+        }
+                
+               
+        covar.col <- rep("",5)
+        pval.col <- rep("",5)
+        if (num.sig.vars==0) {
+          covar.col[1]<- "None"
+        } 
+        else {
+          covar.col[1:num.sig.vars] <- sig.covar.table.col
+        }
+        p.vals <- formatC(p.vals, digits = 3,drop0trailing=TRUE)
+        pval.col[1]  <-  formatC(p.value.for.Diag, digits = 3,drop0trailing=TRUE)
+        unit.block <- data.frame(sex=sex.var,aggstat=agg.stat.name, Diag= unique(all.df.lf.stg$Diag),Covariates=covar.col,p_values= pval.col)
+        aov.test.results <- rbind(aov.test.results,unit.block)
+        #covar.col.all.sex <- c(covar.col.all.sex,covar.col)
+        #pval.col.all.sex  <- c(pval.col.all.sex,pval.col)
+      }  
+    }
+    
+    if (hemi.var=="lh") print.table.lh.df <- merge(print.table.lh.df, aov.test.results,  by = c("aggstat","Diag","sex"),sort=FALSE )
+    if  (hemi.var=="rh") print.table.rh.df <- merge(print.table.rh.df, aov.test.results,  by = c("aggstat","Diag","sex"),sort=FALSE )
+    
+  }
+  
+  print.table.merged.df <-merge(print.table.rh.df,print.table.lh.df, by = c("aggstat","sex","Diag"),suffixes=c(".rh",".lh"),sort=FALSE)
+  
+  
+  new.table <- list(print.table.merged.df)
+  names(new.table ) <- region.for.table
+  stat.tables.for.regions <- c(stat.tables.for.regions ,new.table)
+#}
+@
+
+
+
+<<Table_3_pre, results='asis', eval=FALSE,echo=FALSE>>=
+  #class(summary_table_1.df)<-"data.frame"
+  table.out <- xtable(stat.tables.for.regions[["stg"]])
+  print.xtable(table.out,floating.environment="sidewaystable" , include.rownames=FALSE,include.colnames=TRUE)
+  @
+
+\newpage
+\begin{sidewaystable}
+  \centering
+	\footnotesize
+	\begin{tabular}{l|rr|rr|rr|rr}
+	\hline
+	\textbf{Region} & & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{|c}{Left} & & \\
+	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
+	\hline\hline
+	<<Table_3_stg, results='asis', eval=TRUE,echo=FALSE>>=
+  #class(summary_table_1.df)<-"data.frame"
+  #stat.tables.for.regions[["stg"]]$aggstat<-
+
+  table.out <- xtable(stat.tables.for.regions[["stg"]])
+  print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
+  @
+	
+                \end{tabular}
+	\caption{\textbf{STG  Measure}.  Statistics for each geometric feature of the STG.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
+	\label{Wave1.STG.ANCOVA.b}
+  \end{sidewaystable}
+  
+  
+  
+  \newpage
+\begin{sidewaystable}
+  \centering
+  \footnotesize
+	\begin{tabular}{l|rr|rr|rr|rr}
+	\hline
+	\textbf{Region} & & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{|c}{Left} & & \\
+	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
+	\hline\hline
+	<<Table_3_mtg, results='asis', eval=TRUE,echo=FALSE>>=
+  #class(summary_table_1.df)<-"data.frame"
+  #stat.tables.for.regions[["stg"]]$aggstat<-
+
+  table.out <- xtable(stat.tables.for.regions[["mtg"]])
+  print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
+  @
+	
+                \end{tabular}
+	\caption{\textbf{MTG  Measure}.  Statistics for each geometric feature of the MTG.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
+	\label{Wave1.MTG.ANCOVA.b}
+  \end{sidewaystable}
+
+
+
+  \newpage
+\begin{sidewaystable}
+  \centering
+  \footnotesize
+  \begin{tabular}{l|rr|rr|rr|rr}
+	\hline
+	\textbf{Region} & & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{|c}{Left} & & \\
+	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
+	\hline\hline
+	<<Table_3_itg, results='asis', eval=TRUE,echo=FALSE>>=
+  #class(summary_table_1.df)<-"data.frame"
+  #stat.tables.for.regions[["stg"]]$aggstat<-
+
+  table.out <- xtable(stat.tables.for.regions[["itg"]])
+  print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
+  @
+	
+                \end{tabular}
+	\caption{\textbf{ITG  Measure}.  Statistics for each geometric feature of the ITG.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
+	\label{Wave1.ITG.ANCOVA.b}
+  \end{sidewaystable}
+
+
+
+  \newpage
+\begin{sidewaystable}
+  \centering
+  \footnotesize
+  \begin{tabular}{l|rr|rrrr|rrrr|rr}
+	\hline
+	\textbf{Region} & & & \multicolumn{4}{c}{Right} \T & \multicolumn{4}{|c}{Left} & & \\
+	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Covariate & P & Mean & SD & Covariate & P \\
+	\hline\hline
+	<<Table_3_postcing, results='asis', eval=TRUE,echo=FALSE>>=
+  
+  table.out <- xtable(stat.tables.for.regions[["postcing"]])
+  print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
+  @
+	
+                \end{tabular}
+	\caption{\textbf{Posterior Cingulate  Measure}.  Statistics for each geometric feature of the Posterior Cingulate.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
+	\label{Wave1.postcing.ANCOVA.b}
+  \end{sidewaystable}
+
+
+
+
+  \newpage
+\begin{sidewaystable}
+  \centering
+  \footnotesize
+  \begin{tabular}{l|rr|rr|rr|rr}
+  \hline
+	\textbf{Region} & & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{|c}{Left} & & \\
+	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
+	\hline\hline
+	<<Table_3_antcing, results='asis', eval=TRUE,echo=FALSE>>=
+  #class(summary_table_1.df)<-"data.frame"
+  #stat.tables.for.regions[["stg"]]$aggstat<-
+
+  table.out <- xtable(stat.tables.for.regions[["antcing"]])
+  print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
+  @
+	
+                \end{tabular}
+	\caption{\textbf{Anterior Cingulate  Measure}.  Statistics for each geometric feature of the Anterior Cingulate.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
+	\label{Wave1.antcing.ANCOVA.b}
+  \end{sidewaystable}
+
+
+<<Pooled_Stat_Tests>>=
+ side =  c("lh","rh")
+  regions = c("itg","mtg","stg","antcing","postcing")
+  conditions  = c("normal","aMCI","amdMCI","nMCI","nmdMCI")
+  comparisons = t(array(1,2,1,3,1,4,1,5,2,3,2,4,4,5,dim = c(2,7)))
+  
+  cond_1_fileh <- open(file = paste0(DATA_DIR,"/",side,'_',region,"_",cond_1,"_wave1_pooled_antsy.txt"))
+  cond_2_fileh <- open(file = paste0(DATA_DIR,"/",side,'_',region,"_",cond_2,"_wave1_pooled_antsy.txt"))
+ 
+
+
+@
+
+\newpage
+\begin{sidewaystable}
+	\centering
+	\footnotesize
+	\begin{tabular}{rr|rrr|rrr|rrr}
+		\hline
+		\multicolumn{2}{c|}{Region} \T\B & \multicolumn{3}{c|}{KS test} & \multicolumn{3}{c|}{MWU test} & \multicolumn{3}{c}{Welch's t-test} \\
+		& & two-sided & less & greater & two-sided & greater & less & two-sided & greater & less \\ \hline
+		& aMCI vs norm\T & $<$.0001 & .0832 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		rh stg & nMCI vs norm & $<$.0001 & $<$.0001 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI\T & $<$.0001 & .5210 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
+		& aMCI vs norm & $<$.0001 & .9794 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		lh stg & nMCI vs norm & $<$.0001 & .9983 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & $<$.0001 & .0128 & .0064  & .9936 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & $<$.0001 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		rh stg & nMCI vs norm & $<$.0001 & .0121 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		(women)& aMCI vs nMCI & $<$.0001 & $<$.0001 & .0086 & .1065 & .0533 & .9467 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & .9989 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		lh stg & nMCI vs norm & $<$.0001 & .9998 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		(women)& aMCI vs nMCI & $<$.0001 & $<$.0001 & .0032 & .0060 & .0030 & .9970 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & .0396 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		rh mtg & nMCI vs norm & $<$.0001 & $<$.0001 & $<$.0001 & .5428 & .7286 & .2714 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & .4099 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		lh mtg & nMCI vs norm & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1  & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & .0296 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
+		& aMCI vs norm\T &  $<$.0001 & $<$.0001 & $<$.0001 & .5723 & NA & NA & .8289 & NA & NA \\
+		rh itg & nMCI vs norm & $<$.0001 & $<$.0001 & .7620 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
+		& aMCI vs nMCI & $<$.0001 & .5502 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
+		& aMCI vs norm\T &  $<$.0001 & .8740 & $<$.0001 &  $<$.0001 & 1 & $<$.0001 &  $<$.0001 & 1 & $<$.0001 \\
+		lh itg & nMCI vs norm & $<$.0001 & .7938 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & .8740 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+	\end{tabular}
+	\caption{\textbf{Temporal Lobe Pooled LCDM Analysis Results.}  Showing p-values obtained from nonparametric distribution tests.}
+	\label{Wave1.TL.nonpara}
+\end{sidewaystable}
+
+\newpage
+\begin{sidewaystable}
+	\centering
+	\footnotesize
+	\begin{tabular}{rr|rrr|rrr|rrr}
+		\hline
+		\multicolumn{2}{c|}{Region} \T\B & \multicolumn{3}{c|}{KS test} & \multicolumn{3}{c|}{MWU test} & \multicolumn{3}{c}{Welch's t-test} \\
+		& & two-sided & less & greater & two-sided & greater & less & two-sided & greater & less \\ \hline
+		& aMCI vs norm\T &  $<$.0001 & $<$.0001 & .9896 &  $<$.0001 & $<$.0001 & 1 &  $<$.0001 & $<$.0001 & 1 \\
+		rh antcing & nMCI vs norm & .0047 & .0024 & .9696 & .0496 & .0248 & .9752 & .0463 & .0232 & .9768 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9986 & $<$.0001 & $<$.0001 & .9986 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & $<$.0001 & .8789 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
+		lh antcing & nMCI vs norm & $<$.0001 & $<$.0001 & .6552 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9725 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & .0001 & $<$.0001 & .0043 & .2136 & .1068 & .8932 & .5986 & .2993 & .7007 \\
+		rh postcing & nMCI vs norm & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9786 & $<$.0001 & $<$.0001 & .9786 & $<$.0001 & $<$.0001 & 1 \\ \hline
+		& aMCI vs norm\T & $<$.0001 & .9911 & $<$.0001 & $<$.0001 & 1 & $<$.0001  & $<$.0001 & 1 & $<$.0001  \\
+		lh postcing & nMCI vs norm & $<$.0001 & .9971 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
+		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .8553 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
+	\end{tabular}
+	\caption{\textbf{Cingulate Gryus Pooled LCDM Analysis Results}   Showing p-values obtained from nonparametric distribution tests.}
+	\label{Wave1.cing.nonpara}
+\end{sidewaystable}
+
+
+\end{document}
+
+
