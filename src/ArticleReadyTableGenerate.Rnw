@@ -642,14 +642,37 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 
 
 <<Pooled_Stat_Tests>>=
+  DATA_DIR = "./data/pooled_analysis/"
  side =  c("lh","rh")
   regions = c("itg","mtg","stg","antcing","postcing")
   conditions  = c("normal","aMCI","amdMCI","nMCI","nmdMCI")
   comparisons = t(array(1,2,1,3,1,4,1,5,2,3,2,4,4,5,dim = c(2,7)))
+  pooled_stats_list = list()
   
-  cond_1_fileh <- open(file = paste0(DATA_DIR,"/",side,'_',region,"_",cond_1,"_wave1_pooled_antsy.txt"))
-  cond_2_fileh <- open(file = paste0(DATA_DIR,"/",side,'_',region,"_",cond_2,"_wave1_pooled_antsy.txt"))
- 
+  #read the pooled files 
+  for (i in 1:5) {
+    cond_fileh <- open(file = paste0(DATA_DIR,"/",side,'_',region,"_", conditions[i], "_wave1_pooled_antsy.txt"))
+    pooled_stats_list <-read.table(cond_fileh, nrows = 2.5E6, colClasses = "numeric")
+    if ( is.data.frame(pooled_stats_list) ) {
+      pooled_stats_list <- pooled_stats_list[,1]
+    }
+    pooled_stats_list <-c(pooled_stats_list, list(pool_stats)) 
+  }
+  # run the stat tests for the 7 pair comparisons. We may want to limi
+  for ( i in 1:7 ) {
+    cond_1 = comparisons[i,1]
+    cond_2 = comparisons[i,2]
+     pooled_test_result[[i]] <- wilcox.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
+                               alternative="t",exact = FALSE,
+                               correct = FALSE)
+      pooled_test_result[[i]] <- ks.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
+                           alternative="t",exact = NULL)
+    
+    pooled_test_result[[i]] <- ks.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],    
+                                       alternative = "t",mu = 0, paired = FALSE, 
+                           var.equal = FALSE, conf.level = 0.95)
+  
+  }
 
 
 @
