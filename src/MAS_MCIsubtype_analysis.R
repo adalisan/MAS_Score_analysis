@@ -1,5 +1,8 @@
 library(foreign)
 #Read cognitive score and Dx files
+HOME_DIR <- Sys.getenv("HOME")
+
+setwd(paste0(HOME_DIR,"/projects/MAS_Score_Analysis/",collapse=""))
 MAS.normal.df <- read.spss("./data/M_w123_npsych_v20130718/M_all_npsych_normal_v20120921.sav")
 
 MAS.normal.df<- as.data.frame(MAS.normal.df[c(1:17,143:180,184:203,207:209)])
