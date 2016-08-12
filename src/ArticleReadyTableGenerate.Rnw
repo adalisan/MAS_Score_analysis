@@ -38,18 +38,18 @@
 %\SweaveOpts{concordance=TRUE}
 
 
-<<LoadData_and_BasicDataMunge,echo=FALSE,results='hide',warning=FALSE, message=FALSE>>=
+<<LoadData_and_BasicDataMunge,echo=FALSE,results='hide',warning=FALSE, message=FALSE,cache=FALSE>>=
 # Load Data
 library(foreign)
 library(dplyr)
 library(xtable)
 HOME_DIR <- Sys.getenv("HOME")
 print(HOME_DIR)
-setwd(HOME_DIR)
-setwd("./projects/MAS_Score_Analysis")
+opts_knit$set(root.dir=paste0(Sys.getenv("HOME"),"/projects/MAS_Score_Analysis/",sep="",collapse=""))
+#setwd("./projects/MAS_Score_Analysis")
 #setwd( paste0(Sys.getenv("HOME"),"/projects/MAS_Score_Analysis/"))
 #The script gets data from  SPSS files, merges data frames to one data frame
-source("./src/MAS_MCIsubtype_analysis.R")
+source( paste0(Sys.getenv("HOME"),"/projects/MAS_Score_Analysis/","./src/MAS_MCIsubtype_analysis.R",sep="",collapse=""))
 all.df<- droplevels(all.df)
 
 all.var.names<- names(all.df)
@@ -72,7 +72,7 @@ summary_table_1.df <- arrange(summary_table_1.df,Diag,sex)
 		\hline
 		Diag \T& Gender & Number & \multicolumn{2}{c}{Age (Yrs)} & \multicolumn{2}{c}{YrsEd (Yrs)} \\
 		& \B & & Mean & SD & Mean & SD \\ \hline
-<<Table_1_summarystats, results='asis', eval=TRUE,echo=FALSE>>=
+<<Table_1_summarystats, results='asis', eval=TRUE,echo=FALSE,cache=FALSE>>=
   class(summary_table_1.df)<-"data.frame"
   table.out <- xtable(summary_table_1.df)
   print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE)
@@ -643,37 +643,68 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 
 <<Pooled_Stat_Tests>>=
   DATA_DIR = "./data/pooled_analysis/"
- side =  c("lh","rh")
+  sides =  c("lh","rh")
   regions = c("itg","mtg","stg","antcing","postcing")
   conditions  = c("normal","aMCI","amdMCI","nMCI","nmdMCI")
-  comparisons = t(array(1,2,1,3,1,4,1,5,2,3,2,4,4,5,dim = c(2,7)))
-  pooled_stats_list = list()
+  comparisons = t(array(c(1,2,1,3,1,4,1,5,2,3,2,4,4,5),dim = c(2,7)))
   
-  #read the pooled files 
-  for (i in 1:5) {
-    cond_fileh <- open(file = paste0(DATA_DIR,"/",side,'_',region,"_", conditions[i], "_wave1_pooled_antsy.txt"))
-    pooled_stats_list <-read.table(cond_fileh, nrows = 2.5E6, colClasses = "numeric")
-    if ( is.data.frame(pooled_stats_list) ) {
-      pooled_stats_list <- pooled_stats_list[,1]
-    }
-    pooled_stats_list <-c(pooled_stats_list, list(pool_stats)) 
-  }
-  # run the stat tests for the 7 pair comparisons. We may want to limi
-  for ( i in 1:7 ) {
-    cond_1 = comparisons[i,1]
-    cond_2 = comparisons[i,2]
-     pooled_test_result[[i]] <- wilcox.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
-                               alternative="t",exact = FALSE,
-                               correct = FALSE)
-      pooled_test_result[[i]] <- ks.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
-                           alternative="t",exact = NULL)
-    
-    pooled_test_result[[i]] <- ks.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],    
-                                       alternative = "t",mu = 0, paired = FALSE, 
-                           var.equal = FALSE, conf.level = 0.95)
   
-  }
+  pool_stat_tests_all_regions_sides<- list(lh = NULL, rh = NULL)
+  for ( side in sides) {
+    pool_stat_tests_all_regions_sides[[side]] = list()
+    for ( region in regions ) {
+      pooled_stats_list = list()
+      
+      #read the pooled files 
+      for (i in 1:5) {
+        cond_fileh <- paste(DATA_DIR,"/",side,'_',region,"_", conditions[i], 
+                            "_wave1_pooled_antsy.txt", sep="", collapse ="")
+        print (cond_fileh)
+        if (! file.exists(cond_fileh)) {
+          print (paste0( cond_fileh,
+                         " does not exist",sep="",collapse="") )
+        }
+        pooled_stats <-read.table(file=cond_fileh, nrows = 2.5E6, colClasses = "numeric")
+        print (str(pooled_stats_list))
+        if ( is.data.frame(pooled_stats_list) ) {
+          pooled_stats <- pooled_stats[,1]
+        }
+        pooled_stats_list <-c(pooled_stats_list,list(pooled_stats))
+        
+        
 
+      }
+      pool_stat_tests_all_regions_sides[[side]] <-c(pool_stat_tests_all_regions_sides[[side]], list(pooled_stats_list)) 
+      #run the stat tests for the 7 pair comparisons. We may want to limi
+      pooled_test_result<-list()
+      for ( i in 1:7 ) {
+        pooled_test_result <- c(pooled_test_result,list=list())
+      }
+      
+      p_values<-list(mwu.test=rep(0,7), ks.test = rep(0,7), kolmog.test = rep(0,7))
+      for ( i in 1:7 ) {
+        cond_1 = comparisons[i,1]
+        cond_2 = comparisons[i,2]
+        
+        pooled_test_result[[i]] <- ks.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
+                                           alternative="t",exact = NULL)
+        p_values$ks.test[i] <-pooled_test_result[[i]]$p.value
+        
+        pooled_test_result[[i]] <- wilcox.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
+                                               alternative="t",exact = FALSE,
+                                               correct = FALSE)
+        p_values$mwu.test[i] <-pooled_test_result[[i]]$p.value
+        pooled_test_result[[i]] <- t.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],    
+                                           alternative = "t",mu = 0, paired = FALSE, 
+                                           var.equal = FALSE, conf.level = 0.95)
+        
+        p_values$welcht.test[i] <-pooled_test_result[[i]]$p.value
+      }
+      pool_stat_tests_all_regions_sides[[side]] <- c(pool_stat_tests_all_regions_sides[[side]],list(pooled_test_result) )
+    }
+    names(pool_stat_tests_all_regions_sides[[side]]) <- regions
+  }
+  
 
 @
 
