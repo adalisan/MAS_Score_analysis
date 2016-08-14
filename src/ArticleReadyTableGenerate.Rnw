@@ -641,18 +641,22 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   \end{sidewaystable}
 
 
-<<Pooled_Stat_Tests>>=
+<<Pooled_Stat_Tests,cache=TRUE>>=
   DATA_DIR = "./data/pooled_analysis/"
   sides =  c("lh","rh")
   regions = c("itg","mtg","stg","antcing","postcing")
   conditions  = c("normal","aMCI","amdMCI","nMCI","nmdMCI")
   comparisons = t(array(c(1,2,1,3,1,4,1,5,2,3,2,4,4,5),dim = c(2,7)))
+  hypothesis_ordinality <- c("two.sided","less","greater")
   
+  pool_stat_tests_all_regions_sides <- matrix(list(), nrow=2,ncol=5,dimnames = list(sides=sides,regions=regions))
   
-  pool_stat_tests_all_regions_sides<- list(lh = NULL, rh = NULL)
+  print (str(pool_stat_tests_all_regions_sides))
+  pool_stats_all <-  matrix(rep(c(),10), nrow=2,ncol=5,dimnames = list(sides=sides,regions=regions))
   for ( side in sides) {
-    pool_stat_tests_all_regions_sides[[side]] = list()
+    
     for ( region in regions ) {
+      
       pooled_stats_list = list()
       
       #read the pooled files 
@@ -664,46 +668,54 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
           print (paste0( cond_fileh,
                          " does not exist",sep="",collapse="") )
         }
-        pooled_stats <-read.table(file=cond_fileh, nrows = 2.5E6, colClasses = "numeric")
+        #pooled_stats <-read.table(file=cond_fileh, nrows = 2.5E6, colClasses = "numeric")
+        pooled_stats <- scan(file=cond_fileh)
         print (str(pooled_stats_list))
         if ( is.data.frame(pooled_stats_list) ) {
-          pooled_stats <- pooled_stats[,1]
+          pooled_stats <- as.vector(pooled_stats[,1])
         }
         pooled_stats_list <-c(pooled_stats_list,list(pooled_stats))
-        
-        
-
       }
-      pool_stat_tests_all_regions_sides[[side]] <-c(pool_stat_tests_all_regions_sides[[side]], list(pooled_stats_list)) 
-      #run the stat tests for the 7 pair comparisons. We may want to limi
-      pooled_test_result<-list()
-      for ( i in 1:7 ) {
-        pooled_test_result <- c(pooled_test_result,list=list())
-      }
+      print(str(pool_stats_all[side,region]))
+      print(str(pooled_stats_list))
+      #pool_stats_all[side,region] <- c(pool_stats_all[side,region],pooled_stats_list)
+      pool_stats_all[side,region] <- pooled_stats_list
       
-      p_values<-list(mwu.test=rep(0,7), ks.test = rep(0,7), kolmog.test = rep(0,7))
+      #run the stat tests for the 7 pair comparisons. We may want to limi
+      pooled_test_results<-list()
+      for ( i in 1:7 ) {
+        pooled_test_results <- c(pooled_test_results,list=list())
+      }
+      empty.df <- data.frame( two.sided=rep(0,7),less= rep(0,7),greater=rep(0,7) )
+      p_values<-list(mwu.test=empty.df, ks.test = empty.df, welch.t.test=empty.df)
+      
       for ( i in 1:7 ) {
         cond_1 = comparisons[i,1]
         cond_2 = comparisons[i,2]
+        pooled_test_results[[i]] <-list(two.sided=c(),less=c(),greater=c())
+        for (test.type in  hypothesis_ordinality) {
         
-        pooled_test_result[[i]] <- ks.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
-                                           alternative="t",exact = NULL)
-        p_values$ks.test[i] <-pooled_test_result[[i]]$p.value
         
-        pooled_test_result[[i]] <- wilcox.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
-                                               alternative="t",exact = FALSE,
+        kolmog.test.result<- ks.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
+                                           alternative=test.type,exact = NULL)
+        p_values$ks.test[i,][test.type] <-kolmog.test.result$p.value
+        
+        wilcox.test.result <- wilcox.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
+                                               alternative=test.type,exact = FALSE,
                                                correct = FALSE)
-        p_values$mwu.test[i] <-pooled_test_result[[i]]$p.value
-        pooled_test_result[[i]] <- t.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],    
-                                           alternative = "t",mu = 0, paired = FALSE, 
+        p_values$mwu.test[i,][test.type] <-wilcox.test.result$p.value
+        welch.t.test.result <- t.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],    
+                                           alternative = test.type,mu = 0, paired = FALSE, 
                                            var.equal = FALSE, conf.level = 0.95)
         
-        p_values$welcht.test[i] <-pooled_test_result[[i]]$p.value
+        p_values$welch.t.test[i,][test.type] <-welch.t.test.result$p.value
+       pooled_test_results[[i]][test.type] <-list(ks.test=kolmog.test.result,wilcox.test = wilcox.test.result,t.test= welch.t.test.result)
       }
-      pool_stat_tests_all_regions_sides[[side]] <- c(pool_stat_tests_all_regions_sides[[side]],list(pooled_test_result) )
+      
     }
-    names(pool_stat_tests_all_regions_sides[[side]]) <- regions
+    pool_stat_tests_all_regions_sides[side,region] <- c(pool_stat_tests_all_regions_sides[side,region],pooled_test_results)
   }
+}
   
 
 @
