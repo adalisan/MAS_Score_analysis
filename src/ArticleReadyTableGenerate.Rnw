@@ -641,7 +641,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   \end{sidewaystable}
 
 
-<<Pooled_Stat_Tests, cache=TRUE>>=
+<<Pooled_Stat_Tests, cache=TRUE,echo=FALSE>>=
   DATA_DIR = "./data/pooled_analysis/"
   sides =  c("lh","rh")
   regions = c("itg","mtg","stg","antcing","postcing")
@@ -678,7 +678,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
         pooled_stats_list <-c(pooled_stats_list,list(pooled_stats))
       }
       #print(str(pool_stats_all[side,region]))
-      print(str(pooled_stats_list))
+      #print(str(pooled_stats_list))
       #pool_stats_all[side,region] <- c(pool_stats_all[side,region],pooled_stats_list)
       #pool_stats_all[side,region] <- pooled_stats_list
       
@@ -711,9 +711,9 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
         
         p_values$welch.t.test[i,][test.type] <-welch.t.test.result$p.value
        pooled_test_results[[i]][[test.type]]<-vector(mode="list",length = 3 )
-       print(str(pooled_test_results[[i]][[test.type]]))
+       #print(str(pooled_test_results[[i]][[test.type]]))
        pooled_test_results[[i]][[test.type]]<-list(ks.test=kolmog.test.result,wilcox.test = wilcox.test.result,t.test= welch.t.test.result)
-       print(str(pooled_test_results[[i]][[test.type]]))
+       #print(str(pooled_test_results[[i]][[test.type]]))
       }
       
     }
