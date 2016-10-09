@@ -95,19 +95,19 @@
 		\hline
 		Diag \T& Gender & Number & \multicolumn{2}{c}{Age (Yrs)} & \multicolumn{2}{c}{YrsEd (Yrs)} \\
 		& \B & & Mean & SD & Mean & SD \\ \hline
-% latex table generated in R 3.2.3 by xtable 1.7-4 package
-% Fri Feb 26 23:15:23 2016
+% latex table generated in R 3.2.3 by xtable 1.8-2 package
+% Sun Oct 09 02:34:30 2016
   \hline
-normal & Male & 225 & 78.41 & 4.70 & 12.49 & 3.78 \\ 
-  normal & Female & 328 & 78.67 & 4.91 & 11.09 & 3.03 \\ 
-  aMCI & Male &  58 & 79.18 & 4.69 & 12.71 & 4.00 \\ 
-  aMCI & Female &  45 & 80.44 & 5.22 & 11.27 & 3.19 \\ 
-  nMCI & Male &  45 & 78.09 & 4.00 & 11.82 & 3.92 \\ 
-  nMCI & Female &  77 & 79.34 & 4.69 & 10.67 & 3.15 \\ 
-  amdMCI & Male &  45 & 79.12 & 5.16 & 12.28 & 3.82 \\ 
-  amdMCI & Female &  37 & 78.73 & 4.63 & 11.01 & 2.93 \\ 
-  nmdMCI & Male &   9 & 76.87 & 2.69 & 13.00 & 5.50 \\ 
-  nmdMCI & Female &  17 & 75.83 & 3.38 & 9.88 & 2.39 \\ 
+normal & Male &  94 & 77.61 & 4.40 & 12.92 & 4.02 \\ 
+  normal & Female & 133 & 78.64 & 4.68 & 11.08 & 2.98 \\ 
+  aMCI & Male &  29 & 79.61 & 4.51 & 12.78 & 3.70 \\ 
+  aMCI & Female &  16 & 80.95 & 4.46 & 12.44 & 3.14 \\ 
+  nMCI & Male &  15 & 78.37 & 5.20 & 12.80 & 4.74 \\ 
+  nMCI & Female &  30 & 78.80 & 4.79 & 10.00 & 2.69 \\ 
+  amdMCI & Male &  20 & 79.10 & 5.46 & 12.65 & 4.27 \\ 
+  amdMCI & Female &  18 & 79.07 & 4.10 & 10.97 & 3.26 \\ 
+  nmdMCI & Male &   5 & 76.52 & 2.94 & 15.80 & 5.85 \\ 
+  nmdMCI & Female &  11 & 74.67 & 2.52 & 9.73 & 2.65 \\ 
    \hline
 
 
@@ -116,14 +116,23 @@ normal & Male & 225 & 78.41 & 4.70 & 12.49 & 3.78 \\
 	\label{wave1data}
 \end{table}
 
+\begin{kframe}
 
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'ggplot2' was built under R version 3.2.5}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'reshape2' was built under R version 3.2.5}}\end{kframe}
 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: car}}\begin{verbatim}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: car}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'car'}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:dplyr':\\\#\# \\\#\#\ \ \ \  recode}}\begin{verbatim}
 ## [1] "ICVStats ANOVA with covars"
 ## Anova Table (Type III tests)
 ## 
@@ -159,24 +168,24 @@ normal & Male & 225 & 78.41 & 4.70 & 12.49 & 3.78 \\
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
-## % latex table generated in R 3.2.3 by xtable 1.7-4 package
-## % Fri Feb 26 23:15:38 2016
+## % latex table generated in R 3.2.3 by xtable 1.8-2 package
+## % Sun Oct 09 02:34:34 2016
 ## \begin{table}[ht]
 ## \centering
 ## \begin{tabular}{llrrrrr}
 ##   \hline
 ## Diag & sex & Number & mean\_age & sd\_age & mean\_ed\_dur & sd\_ed\_dur \\ 
 ##   \hline
-## normal & Male & 225 & 78.41 & 4.70 & 12.49 & 3.78 \\ 
-##   normal & Female & 328 & 78.67 & 4.91 & 11.09 & 3.03 \\ 
-##   aMCI & Male &  58 & 79.18 & 4.69 & 12.71 & 4.00 \\ 
-##   aMCI & Female &  45 & 80.44 & 5.22 & 11.27 & 3.19 \\ 
-##   nMCI & Male &  45 & 78.09 & 4.00 & 11.82 & 3.92 \\ 
-##   nMCI & Female &  77 & 79.34 & 4.69 & 10.67 & 3.15 \\ 
-##   amdMCI & Male &  45 & 79.12 & 5.16 & 12.28 & 3.82 \\ 
-##   amdMCI & Female &  37 & 78.73 & 4.63 & 11.01 & 2.93 \\ 
-##   nmdMCI & Male &   9 & 76.87 & 2.69 & 13.00 & 5.50 \\ 
-##   nmdMCI & Female &  17 & 75.83 & 3.38 & 9.88 & 2.39 \\ 
+## normal & Male &  94 & 77.61 & 4.40 & 12.92 & 4.02 \\ 
+##   normal & Female & 133 & 78.64 & 4.68 & 11.08 & 2.98 \\ 
+##   aMCI & Male &  29 & 79.61 & 4.51 & 12.78 & 3.70 \\ 
+##   aMCI & Female &  16 & 80.95 & 4.46 & 12.44 & 3.14 \\ 
+##   nMCI & Male &  15 & 78.37 & 5.20 & 12.80 & 4.74 \\ 
+##   nMCI & Female &  30 & 78.80 & 4.79 & 10.00 & 2.69 \\ 
+##   amdMCI & Male &  20 & 79.10 & 5.46 & 12.65 & 4.27 \\ 
+##   amdMCI & Female &  18 & 79.07 & 4.10 & 10.97 & 3.26 \\ 
+##   nmdMCI & Male &   5 & 76.52 & 2.94 & 15.80 & 5.85 \\ 
+##   nmdMCI & Female &  11 & 74.67 & 2.52 & 9.73 & 2.65 \\ 
 ##    \hline
 ## \end{tabular}
 ## \end{table}
@@ -210,8 +219,8 @@ normal & Male & 225 & 78.41 & 4.70 & 12.49 & 3.78 \\
 	\hline
 	Diag\T & \multicolumn{2}{c}{Male} & \multicolumn{2}{c}{Female} & & &  \\
       	&  Mean & SE                & Mean & SE                  & Covariates & p-value & \\ \hline
-% latex table generated in R 3.2.3 by xtable 1.7-4 package
-% Fri Feb 26 23:15:38 2016
+% latex table generated in R 3.2.3 by xtable 1.8-2 package
+% Sun Oct 09 02:34:34 2016
   \hline
 normal & 1583201.74 & 170449.21 & 1373612.62 & 127738.53 & YrsEd      (p = 5.8e-09) &  \\ 
   aMCI & 1582676.67 & 157724.77 & 1420983.00 & 160308.06 & age        (p = 0.000711) & p = 0.188699724445836) \\ 
@@ -227,7 +236,9 @@ normal & 1583201.74 & 170449.21 & 1373612.62 & 127738.53 & YrsEd      (p = 5.8e-
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`\\\#\# Adding missing grouping variables: `aggstat`}}\begin{verbatim}
 ## List of 5
 ##  $ stg     :List of 2
 ##   ..$ lh:'data.frame':	30 obs. of  5 variables:
@@ -605,8 +616,8 @@ normal & 1583201.74 & 170449.21 & 1373612.62 & 127738.53 & YrsEd      (p = 5.8e-
 	\textbf{Region} & & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{|c}{Left} & & \\
 	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
 	\hline\hline
-% latex table generated in R 3.2.3 by xtable 1.7-4 package
-% Fri Feb 26 23:15:42 2016
+% latex table generated in R 3.2.3 by xtable 1.8-2 package
+% Sun Oct 09 02:34:35 2016
  surfarea & Male & normal & 3826.92 & 486.72 & 4227.97 & 462.76 & YrsEd(p = 0.000404) & 0.231 \\ 
   surfarea & Male & aMCI & 3646.86 & 292.94 & 3994.53 & 390.75 & hemi(p = 3.58e-10) &  \\ 
   surfarea & Male & nMCI & 3633.68 & 439.37 & 4059.48 & 372.39 & YrsEd:Diag(p = 0.00485) &  \\ 
@@ -661,8 +672,8 @@ vol & Female & normal & 9792.07 & 1533.40 & 10161.95 & 1661.85 & age(p = 0.00089
 	\textbf{Region} & & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{|c}{Left} & & \\
 	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
 	\hline\hline
-% latex table generated in R 3.2.3 by xtable 1.7-4 package
-% Fri Feb 26 23:15:42 2016
+% latex table generated in R 3.2.3 by xtable 1.8-2 package
+% Sun Oct 09 02:34:35 2016
  surfarea & Male & normal & 2955.49 & 521.56 & 2928.11 & 520.13 & age(p = 0.00028) & 0.536 \\ 
   surfarea & Male & aMCI & 2810.26 & 441.34 & 2616.82 & 419.21 &  &  \\ 
   surfarea & Male & nMCI & 2815.83 & 547.28 & 2861.60 & 458.61 &  &  \\ 
@@ -717,8 +728,8 @@ vol & Female & normal & 10028.05 & 1548.17 & 9425.25 & 1565.44 & hemi(p = 0.0013
 	\textbf{Region} & & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{|c}{Left} & & \\
 	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
 	\hline\hline
-% latex table generated in R 3.2.3 by xtable 1.7-4 package
-% Fri Feb 26 23:15:42 2016
+% latex table generated in R 3.2.3 by xtable 1.8-2 package
+% Sun Oct 09 02:34:35 2016
  surfarea & Male & normal & 2673.84 & 485.46 & 2793.38 & 470.57 & YrsEd:Diag(p = 0.00187) & 0.0079 \\ 
   surfarea & Male & aMCI & 2471.35 & 477.70 & 2701.57 & 530.35 &  &  \\ 
   surfarea & Male & nMCI & 2396.19 & 473.63 & 2598.95 & 455.31 &  &  \\ 
@@ -773,8 +784,8 @@ vol & Female & normal & 7630.77 & 1496.93 & 8414.08 & 1439.92 & hemi(p = 4.79e-0
 	\textbf{Region} & & & \multicolumn{4}{c}{Right} \T & \multicolumn{4}{|c}{Left} & & \\
 	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Covariate & P & Mean & SD & Covariate & P \\
 	\hline\hline
-% latex table generated in R 3.2.3 by xtable 1.7-4 package
-% Fri Feb 26 23:15:42 2016
+% latex table generated in R 3.2.3 by xtable 1.8-2 package
+% Sun Oct 09 02:34:35 2016
  surfarea & Male & normal & 1850.96 & 243.04 & None & 0.739 & 1883.52 & 262.78 & None & 0.807 \\ 
   surfarea & Male & aMCI & 1805.94 & 232.73 &  &  & 1796.95 & 189.00 &  &  \\ 
   surfarea & Male & nMCI & 1841.36 & 198.51 &  &  & 1893.50 & 257.64 &  &  \\ 
@@ -830,8 +841,8 @@ vol & Female & normal & 4208.41 & 758.15 & age:Diag (p= 0.00364 ) & 0.00343 & 41
 	\textbf{Region} & & & \multicolumn{2}{c}{Right} \T & \multicolumn{2}{|c}{Left} & & \\
 	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Mean & SD & Covariate & P \\
 	\hline\hline
-% latex table generated in R 3.2.3 by xtable 1.7-4 package
-% Fri Feb 26 23:15:42 2016
+% latex table generated in R 3.2.3 by xtable 1.8-2 package
+% Sun Oct 09 02:34:35 2016
  surfarea & Male & normal & 1141.85 & 202.73 & 1206.30 & 192.14 & None & 0.0592 \\ 
   surfarea & Male & aMCI & 1127.90 & 207.40 & 1174.61 & 226.10 &  &  \\ 
   surfarea & Male & nMCI & 1138.44 & 257.89 & 1173.83 & 142.65 &  &  \\ 
@@ -875,6 +886,329 @@ vol & Female & normal & 3394.33 & 768.07 & 3575.00 & 805.02 & None & 0.0729 \\
 	\label{Wave1.antcing.ANCOVA.b}
   \end{sidewaystable}
 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## List of 10
+##  $ : NULL
+##  $ : NULL
+##  $ : NULL
+##  $ : NULL
+##  $ : NULL
+##  $ : NULL
+##  $ : NULL
+##  $ : NULL
+##  $ : NULL
+##  $ : NULL
+##  - attr(*, "dim")= int [1:2] 2 5
+##  - attr(*, "dimnames")=List of 2
+##   ..$ sides  : chr [1:2] "lh" "rh"
+##   ..$ regions: chr [1:5] "itg" "mtg" "stg" "antcing" ...
+## NULL
+## [1] "./data/pooled_analysis//lh_itg_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//lh_itg_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:1241457] 0.801 0.553 0.756 0.798 0.559 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_itg_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:1241457] 0.801 0.553 0.756 0.798 0.559 ...
+##  $ : num [1:294908] -6.99 -6.37 -6.72 -6.14 -5.69 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_itg_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:1241457] 0.801 0.553 0.756 0.798 0.559 ...
+##  $ : num [1:294908] -6.99 -6.37 -6.72 -6.14 -5.69 ...
+##  $ : num [1:203726] 0.2908 0.0269 0.902 0.7428 0.5591 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_itg_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:1241457] 0.801 0.553 0.756 0.798 0.559 ...
+##  $ : num [1:294908] -6.99 -6.37 -6.72 -6.14 -5.69 ...
+##  $ : num [1:203726] 0.2908 0.0269 0.902 0.7428 0.5591 ...
+##  $ : num [1:194990] 1.26 1.6 1.3 1.59 1.35 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_mtg_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//lh_mtg_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:1405026] 2.25 2.13 3.23 2.61 2.21 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_mtg_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:1405026] 2.25 2.13 3.23 2.61 2.21 ...
+##  $ : num [1:314897] 1.253 2.088 1.113 1.039 0.725 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_mtg_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:1405026] 2.25 2.13 3.23 2.61 2.21 ...
+##  $ : num [1:314897] 1.253 2.088 1.113 1.039 0.725 ...
+##  $ : num [1:221222] 2.04 1.62 1.43 2.65 2.64 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_mtg_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:1405026] 2.25 2.13 3.23 2.61 2.21 ...
+##  $ : num [1:314897] 1.253 2.088 1.113 1.039 0.725 ...
+##  $ : num [1:221222] 2.04 1.62 1.43 2.65 2.64 ...
+##  $ : num [1:243851] 2.91 3.19 3.07 3.32 3.24 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_stg_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//lh_stg_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:1528544] 2.33 1.84 1.74 1.79 2.08 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_stg_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:1528544] 2.33 1.84 1.74 1.79 2.08 ...
+##  $ : num [1:340540] 2.851 1.569 0.365 3.008 2.921 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_stg_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:1528544] 2.33 1.84 1.74 1.79 2.08 ...
+##  $ : num [1:340540] 2.851 1.569 0.365 3.008 2.921 ...
+##  $ : num [1:252296] 2.23 2.24 1.87 -2.35 1.97 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_stg_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:1528544] 2.33 1.84 1.74 1.79 2.08 ...
+##  $ : num [1:340540] 2.851 1.569 0.365 3.008 2.921 ...
+##  $ : num [1:252296] 2.23 2.24 1.87 -2.35 1.97 ...
+##  $ : num [1:253120] 4.15 3.7 3.61 4.37 3.82 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_antcing_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//lh_antcing_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:831729] 2.55 2.48 2.63 2.87 3.18 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_antcing_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:831729] 2.55 2.48 2.63 2.87 3.18 ...
+##  $ : num [1:170590] 2.56 2.49 2.38 2.29 2.43 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_antcing_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:831729] 2.55 2.48 2.63 2.87 3.18 ...
+##  $ : num [1:170590] 2.56 2.49 2.38 2.29 2.43 ...
+##  $ : num [1:103684] 2.41 2.13 2.47 2.03 1.98 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_antcing_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:831729] 2.55 2.48 2.63 2.87 3.18 ...
+##  $ : num [1:170590] 2.56 2.49 2.38 2.29 2.43 ...
+##  $ : num [1:103684] 2.41 2.13 2.47 2.03 1.98 ...
+##  $ : num [1:166097] 2.42 2.28 2.15 2.24 2.18 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_postcing_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//lh_postcing_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:1008152] 2.49 2.83 2.26 2.38 2.09 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_postcing_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:1008152] 2.49 2.83 2.26 2.38 2.09 ...
+##  $ : num [1:206438] 2.84 2.8 2.7 2.59 1.58 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_postcing_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:1008152] 2.49 2.83 2.26 2.38 2.09 ...
+##  $ : num [1:206438] 2.84 2.8 2.7 2.59 1.58 ...
+##  $ : num [1:130409] 1.79 2.15 1.48 1.62 1.52 ...
+## NULL
+## [1] "./data/pooled_analysis//lh_postcing_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:1008152] 2.49 2.83 2.26 2.38 2.09 ...
+##  $ : num [1:206438] 2.84 2.8 2.7 2.59 1.58 ...
+##  $ : num [1:130409] 1.79 2.15 1.48 1.62 1.52 ...
+##  $ : num [1:203922] 1.93 1.86 2.01 2.45 1.98 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_itg_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//rh_itg_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:1586244] 0.783 1.292 1.14 1.043 0.945 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_itg_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:1586244] 0.783 1.292 1.14 1.043 0.945 ...
+##  $ : num [1:279140] 2.75 2.49 2.3 2.56 2.8 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_itg_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:1586244] 0.783 1.292 1.14 1.043 0.945 ...
+##  $ : num [1:279140] 2.75 2.49 2.3 2.56 2.8 ...
+##  $ : num [1:208279] 0.786 0.402 1.028 0.578 1.042 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_itg_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:1586244] 0.783 1.292 1.14 1.043 0.945 ...
+##  $ : num [1:279140] 2.75 2.49 2.3 2.56 2.8 ...
+##  $ : num [1:208279] 0.786 0.402 1.028 0.578 1.042 ...
+##  $ : num [1:271357] 1.27 1.25 1.82 1.76 1.66 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_mtg_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//rh_mtg_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:2022655] 4.19 3.62 3.25 3.92 3 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_mtg_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:2022655] 4.19 3.62 3.25 3.92 3 ...
+##  $ : num [1:374453] 4.25 4.1 4.77 3.71 4.2 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_mtg_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:2022655] 4.19 3.62 3.25 3.92 3 ...
+##  $ : num [1:374453] 4.25 4.1 4.77 3.71 4.2 ...
+##  $ : num [1:262945] 2.92 2.32 2.11 2.5 1.53 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_mtg_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:2022655] 4.19 3.62 3.25 3.92 3 ...
+##  $ : num [1:374453] 4.25 4.1 4.77 3.71 4.2 ...
+##  $ : num [1:262945] 2.92 2.32 2.11 2.5 1.53 ...
+##  $ : num [1:355177] 3.15 3.5 2.72 2.86 3.13 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_stg_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//rh_stg_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:2004233] 5.91 5.88 5.28 5.24 4.78 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_stg_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:2004233] 5.91 5.88 5.28 5.24 4.78 ...
+##  $ : num [1:352583] 2.93 2.97 3.13 2.88 2.87 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_stg_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:2004233] 5.91 5.88 5.28 5.24 4.78 ...
+##  $ : num [1:352583] 2.93 2.97 3.13 2.88 2.87 ...
+##  $ : num [1:251070] 2.19 2.23 2.45 2.67 2.18 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_stg_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:2004233] 5.91 5.88 5.28 5.24 4.78 ...
+##  $ : num [1:352583] 2.93 2.97 3.13 2.88 2.87 ...
+##  $ : num [1:251070] 2.19 2.23 2.45 2.67 2.18 ...
+##  $ : num [1:349698] 2.65 2.47 2.34 2.4 2.76 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_antcing_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//rh_antcing_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:611723] 3.28 3.37 2.76 2.39 3.58 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_antcing_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:611723] 3.28 3.37 2.76 2.39 3.58 ...
+##  $ : num [1:122389] 2.47 2.1 2.01 2.01 1.92 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_antcing_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:611723] 3.28 3.37 2.76 2.39 3.58 ...
+##  $ : num [1:122389] 2.47 2.1 2.01 2.01 1.92 ...
+##  $ : num [1:98633] 3.99 3.31 3.7 2.96 2.4 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_antcing_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:611723] 3.28 3.37 2.76 2.39 3.58 ...
+##  $ : num [1:122389] 2.47 2.1 2.01 2.01 1.92 ...
+##  $ : num [1:98633] 3.99 3.31 3.7 2.96 2.4 ...
+##  $ : num [1:108195] 3.09 3 2.85 2.99 2.7 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_postcing_normal_wave1_pooled_antsy.txt"
+##  list()
+## NULL
+## [1] "./data/pooled_analysis//rh_postcing_aMCI_wave1_pooled_antsy.txt"
+## List of 1
+##  $ : num [1:748774] 2.58 2.45 3.01 2.55 1.52 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_postcing_amdMCI_wave1_pooled_antsy.txt"
+## List of 2
+##  $ : num [1:748774] 2.58 2.45 3.01 2.55 1.52 ...
+##  $ : num [1:148400] 1.13 1.64 2.17 1.49 2 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_postcing_nMCI_wave1_pooled_antsy.txt"
+## List of 3
+##  $ : num [1:748774] 2.58 2.45 3.01 2.55 1.52 ...
+##  $ : num [1:148400] 1.13 1.64 2.17 1.49 2 ...
+##  $ : num [1:119931] 2.61 2.41 2.35 2.36 2.43 ...
+## NULL
+## [1] "./data/pooled_analysis//rh_postcing_nmdMCI_wave1_pooled_antsy.txt"
+## List of 4
+##  $ : num [1:748774] 2.58 2.45 3.01 2.55 1.52 ...
+##  $ : num [1:148400] 1.13 1.64 2.17 1.49 2 ...
+##  $ : num [1:119931] 2.61 2.41 2.35 2.36 2.43 ...
+##  $ : num [1:139340] 2.25 3.13 2.33 1.61 1.09 ...
+## NULL
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{kframe}
+\begin{alltt}
+  \hlstd{cond_1} \hlkwb{=} \hlstd{conditions[comparisons[,}\hlnum{1}\hlstd{]]}
+  \hlstd{cond_2} \hlkwb{=} \hlstd{conditions[comparisons[,}\hlnum{2}\hlstd{]]}
+  \hlstd{comparison_strings} \hlkwb{<-} \hlkwd{paste}\hlstd{(cond_1,cond_2,} \hlkwc{sep} \hlstd{=}\hlstr{" vs "}\hlstd{)}
+  \hlstd{test_names} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"KS test"}\hlstd{,}\hlstr{"MWU test"}\hlstd{,} \hlstr{"Welch's t-test"}\hlstd{)}
+  \hlstd{col_names} \hlkwb{<-} \hlkwd{outer}\hlstd{(hypothesis_ordinality,test_names,paste,}  \hlkwc{sep}\hlstd{=}\hlstr{"."}\hlstd{)}
+  \hlstd{p_value_table_names} \hlkwb{<-}\hlkwd{expand.grid}\hlstd{(comparison_strings, col_names)}
+  \hlstd{p_value_table} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,}\hlkwc{nrow} \hlstd{=} \hlnum{7}\hlstd{,}\hlkwc{ncol} \hlstd{=} \hlnum{9}\hlstd{)}
+
+  \hlkwa{for} \hlstd{(side} \hlkwa{in} \hlstd{sides)\{}
+    \hlkwa{for} \hlstd{( i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{7} \hlstd{) \{}
+      \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{3}\hlstd{)\{}
+        \hlstd{test.type} \hlkwb{<-}  \hlstd{hypothesis_ordinality[j]}
+        \hlkwa{for} \hlstd{(k} \hlkwa{in} \hlnum{0}\hlopt{:}\hlnum{2}\hlstd{)\{}
+          \hlstd{test.name} \hlkwb{<-} \hlkwd{names}\hlstd{(pooled_test_results[[i]][[test.type]][(k}\hlopt{+}\hlnum{1}\hlstd{)])}
+        \hlstd{p_value_table[i,j} \hlopt{+} \hlstd{(k}\hlopt{*}\hlnum{3}\hlstd{)]} \hlkwb{<-} \hlstd{pooled_test_results[[i]][[test.type]][[test.name]]}\hlopt{$}\hlstd{p.value}
+
+        \hlstd{\}}
+      \hlstd{\}}
+
+    \hlstd{\}}
+  \hlstd{\}}
+  \hlkwd{colnames}\hlstd{(p_value_table)}\hlkwb{<-} \hlstd{col_names}
+  \hlstd{xtab.out} \hlkwb{<-} \hlkwd{xtable}\hlstd{(p_value_table)}
+  \hlstd{addtorow} \hlkwb{<-} \hlkwd{list}\hlstd{()}
+  \hlstd{addtorow}\hlopt{$}\hlstd{pos} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlnum{0}\hlstd{)}
+  \hlstd{addtorow}\hlopt{$}\hlstd{command} \hlkwb{<-} \hlkwd{paste0}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{'& \textbackslash{}\textbackslash{}multicolumn\{3\}\{c\}\{'}\hlstd{,} \hlkwd{c}\hlstd{(}\hlstr{"KS test"}\hlstd{,}\hlstr{"MWU test"}\hlstd{,} \hlstr{"Welch's t-test"}\hlstd{),} \hlstr{'\}'}\hlstd{,} \hlkwc{collapse}\hlstd{=}\hlstr{''}\hlstd{),} \hlstr{'\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}'}\hlstd{)}
+  \hlkwd{print} \hlstd{(xtab.out,} \hlkwc{add.to.row} \hlstd{= addtorow,} \hlkwc{only.contents}\hlstd{=}\hlnum{TRUE}\hlstd{,}
+    \hlkwc{include.rownames}\hlstd{=}\hlnum{FALSE}\hlstd{,}
+    \hlkwc{type}\hlstd{=}\hlstr{"latex"}\hlstd{)}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.2.3 by xtable 1.8-2 package
+% Sun Oct 09 02:34:35 2016
+two.sided.KS test & less.KS test & greater.KS test & two.sided.MWU test & less.MWU test & greater.MWU test & two.sided.Welch's t-test & less.Welch's t-test & greater.Welch's t-test \\ 
+  & \multicolumn{3}{c}{KS test}& \multicolumn{3}{c}{MWU test}& \multicolumn{3}{c}{Welch's t-test}\\ \hline
+0.00 & 0.25 & 0.00 & 0.00 & 0.00 & 1.00 & 0.00 & 0.00 & 1.00 \\ 
+  0.00 & 0.82 & 0.00 & 0.00 & 0.00 & 1.00 & 0.00 & 0.00 & 1.00 \\ 
+  0.00 & 0.90 & 0.00 & 0.00 & 0.00 & 1.00 & 0.00 & 0.00 & 1.00 \\ 
+  0.00 & 0.00 & 0.13 & 0.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.00 \\ 
+  0.00 & 0.90 & 0.00 & 0.00 & 0.00 & 1.00 & 0.00 & 0.00 & 1.00 \\ 
+  0.00 & 0.25 & 0.00 & 0.00 & 0.00 & 1.00 & 0.00 & 0.00 & 1.00 \\ 
+  0.00 & 0.00 & 0.76 & 0.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.00 \\ 
+   \hline
+\begin{kframe}\begin{alltt}
+\hlcom{# create a table of 7 comparisons}
+\hlcom{# }
+\end{alltt}
+\end{kframe}
 
 
 
