@@ -641,7 +641,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   \end{sidewaystable}
 
 
-<<Pooled_Stat_Tests, cache=TRUE,echo=FALSE>>=
+<<Pooled_Stat_Tests, cache=TRUE,echo=FALSE,warning=FALSE>>=
   DATA_DIR = "./data/pooled_analysis/"
   sides =  c("lh","rh")
   regions = c("itg","mtg","stg","antcing","postcing")
@@ -723,6 +723,44 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   
 
 @
+
+<<echo=FALSE, results='asis' >>=
+  
+  cond_1 = conditions[comparisons[,1]]
+  cond_2 = conditions[comparisons[,2]]
+  comparison_strings <- paste(cond_1,cond_2, sep =" vs ")
+  test_names <- c("KS test","MWU test", "Welch's t-test")
+  col_names <- outer(hypothesis_ordinality,test_names,paste,  sep=".")
+  p_value_table_names <-expand.grid(comparison_strings, col_names)
+  p_value_table <- matrix(0,nrow = 7,ncol = 9)
+  
+  for (side in sides){
+    for ( i in 1:7 ) {
+      for (j in 1:3){
+        test.type <-  hypothesis_ordinality[j]
+        for (k in 0:2){
+          test.name <- names(pooled_test_results[[i]][[test.type]][(k+1)])
+        p_value_table[i,j + (k*3)] <- pooled_test_results[[i]][[test.type]][[test.name]]$p.value
+        
+        }
+      }
+      
+    }
+  }
+  colnames(p_value_table)<- col_names
+  xtab.out <- xtable(p_value_table)
+  addtorow <- list()
+  addtorow$pos <- list(0)
+  addtorow$command <- paste0(paste0('& \\multicolumn{3}{c}{', c("KS test","MWU test", "Welch's t-test"), '}', collapse=''), '\\\\')
+  print.xtable (xtab.out, add.to.row = addtorow, only.contents=TRUE,
+    include.rownames=FALSE,
+    type="latex")
+# create a table of 7 comparisons
+# 
+
+@
+
+
 
 \newpage
 \begin{sidewaystable}
