@@ -725,7 +725,14 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 @
 
 <<echo=FALSE, results='asis' >>=
-
+ convert_to_paper_style <- function(x) {
+   if (x<1E-4) {
+   return ("<0.0001") 
+   } else {
+    return (as.character(x,digits=4))
+   }
+ }
+  make_matrix_printable <- Vectorize(convert_to_paper_style)
   cond_1 = conditions[comparisons[,1]]
   cond_2 = conditions[comparisons[,2]]
   comparison_strings <- paste(cond_1,cond_2, sep =" vs ")
@@ -748,9 +755,11 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
     }
   }
   colnames(p_value_table)<- col_names
-  p_value_table_print <- mapply(p_value_table, function(x){if (x<1E-4) return ("<0.0001") else{
-    return(as.character(x,digits=4))
-  }})
+  table_dims<- dim(p_value_table)
+  p_value_table_print <- make_matrix_printable(p_value_table )
+  dim(p_value_table_print) <- table_dims
+  print(str(p_value_table_print))
+  
   xtab.out <- xtable(p_value_table_print)
   addtorow <- list()
   addtorow$pos <- list(0)
