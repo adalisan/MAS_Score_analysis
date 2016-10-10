@@ -60,7 +60,7 @@ all.df$Wave1 <- !is.na(all.df$ICV_W1)
 grouping_gender_diag <- group_by(all.df[all.df$Wave1, ], Diag,sex)
 print (paste0(sum(all.df$Wave1), "  patients summarized"))
 # create a table of summary statistics
-summary_table_1.df  <- summarize (grouping_gender_diag, Number= n(), mean_age=mean(age,na.rm=T), sd_age=sd(age,na.rm=T), 
+summary_table_1.df  <- summarize (grouping_gender_diag, Number= n(), mean_age=mean(age,na.rm=T), sd_age=sd(age,na.rm=T),
            mean_ed_dur =mean(YrsEd,na.rm=T), sd_ed_dur= sd(YrsEd,na.rm=T) )
 summary_table_1.df <- arrange(summary_table_1.df,Diag,sex)
 
@@ -111,7 +111,7 @@ agg.stats.names <- unique(all.df.lf$aggstat)
 
 print(fig.1)
 
-# plotting  LCDM statistic vs ICV for each statistic (thickness, surface area, volume) for each region/subregion, we ge a plot that shows there does not seem to be significantly positive slope for any of the measures and the conditional correlation between ICV and the measure (given the class) is weak. 
+# plotting  LCDM statistic vs ICV for each statistic (thickness, surface area, volume) for each region/subregion, we ge a plot that shows there does not seem to be significantly positive slope for any of the measures and the conditional correlation between ICV and the measure (given the class) is weak.
 #TODO :   condition  on the class label here.
 @
 
@@ -163,7 +163,7 @@ cov_column_2 <- c(cov_column_2,rep("",2))
 
 cov_test_cols<-data.frame(Covariate=cov_column,p.value=cov_column_2)
 table.out<-xtable(cbind(print.table.df,print.table2.df[,2:3],cov_test_cols))
-  
+
 @
 
 
@@ -191,28 +191,28 @@ stat.tables.for.regions <- list()
 summ.stats.tables<-list(stg=list(),mtg=list(),itg=list(),postcing=list(),antcing=list())
 for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
   all.df.lf.stg    <- filter(all.df.lf, region==region.for.table)
-  
-  
+
+
   all.df.lf.stg.lh <- filter(all.df.lf.stg,hemi=="lh")
   all.df.lf.stg.rh <- filter(all.df.lf.stg,hemi=="rh")
-  
+
   all.df.lf.stg.lh.grp<- group_by(all.df.lf.stg.lh, aggstat, sex,Diag)
   all.df.lf.stg.rh.grp<- group_by(all.df.lf.stg.rh, aggstat, sex,Diag)
-  
+
   summary_table_3.df.lh  <- summarize (all.df.lf.stg.lh.grp, mean_measure=mean(LCDM.measure,na.rm=T), sd_measure=sd(LCDM.measure,na.rm=T))
   summary_table_3.df.rh  <- summarize (all.df.lf.stg.rh.grp, mean_measure=mean(LCDM.measure,na.rm=T), sd_measure=sd(LCDM.measure,na.rm=T))
-  
-  
+
+
   print.table.lh.df <- select(summary_table_3.df.lh ,sex, Diag,mean_measure,sd_measure)
   class(print.table.lh.df) <- "data.frame"
-  
-  
+
+
   print.table.rh.df<-select(summary_table_3.df.rh,sex, Diag,mean_measure,sd_measure)
   class(print.table.rh.df) <- "data.frame"
-  
+
   summ.stats.tables[[region.for.table]] <- list(lh=print.table.lh.df,
                                               rh= print.table.rh.df)
-  
+
 }
 print(str(summ.stats.tables))
 @
@@ -256,7 +256,7 @@ print(aov.result)
 for (sex.var in c( "Male","Female")){
   aov.fit.init.sep.hemi<- lm(LCDM.measure~(cYrsEd+cage)*Diag,data=all.df.lf.stg, subset =  (sex==sex.var))
   aov.result <-Anova(aov.fit.init.sep.hemi,type="III")
-      
+
   print(paste0("gender: ",sex.var))
   print(aov.result)
 }
@@ -265,32 +265,32 @@ for (sex.var in c( "Male","Female")){
 @
 
 
-% For STG, non-significant for SA,vol,thickness 
-% in hemi*Diag stat test, 
+% For STG, non-significant for SA,vol,thickness
+% in hemi*Diag stat test,
 % combine hemispheres
 % sex:Diag interaction is significant for thickness and Vol
 % separate based on gender
 
-% For MTG, not significant in hemi*Diag stat test, 
+% For MTG, not significant in hemi*Diag stat test,
 % combine data from hemi
 
-% significant sex:Diag for all Thickness, vol, SA 
+% significant sex:Diag for all Thickness, vol, SA
 %  so  separate female, male
 
-% For ITG,   
-% 
-% no significance in \textit{hemi:Diag} test, 
+% For ITG,
+%
+% no significance in \textit{hemi:Diag} test,
 % combine hemispheres
 % significant sex:Diag in ITG vol
 % separate female, male
 
 
-% For postcing, the interaction  term is significant in hemi*Diag stat test, 
+% For postcing, the interaction  term is significant in hemi*Diag stat test,
 % (separate hemisphere)(only for thickness)
 % significant  sex:Diag for postcing vol, so separate female, male
 
 
-% For antcing,  nonsignificant in hemi*Diag stat test, 
+% For antcing,  nonsignificant in hemi*Diag stat test,
 % so combine hemi
 
 
@@ -304,7 +304,7 @@ require(ez)
 #                    within=.(hemi), between=.(YrsEd,age,sex,Diag))
 for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
   for (measure.name in agg.stats.names){
-    
+
 print(paste0("Diagnostics for Subregion = ",region.for.table," ",
              measure.name ))
     all.df.lf.stg    <- filter(all.df.lf, region==region.for.table & aggstat==measure.name)
@@ -351,22 +351,22 @@ print(ez.anova)
 diag.list<-c("normal","aMCI","nMCI","amdMCI","nmdMCI")
 for (region.for.table in c("stg" ,"mtg","itg","antcing")){
 #  region.for.table="stg"
-  print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh 
+  print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   print.table.rh.df <-summ.stats.tables[[region.for.table]]$rh
 
   all.df.lf.stg  <- filter(all.df.lf, region==region.for.table)
   aov.test.results <- data.frame(sex=character(0),aggstat=character(0),Diag=character(0),Covariates=character(0),p_values= numeric(0))
-    
+
     for (agg.stat.name in agg.stats.names){
       covar.col.all.sex <-c()
       pval.col.all.sex <-c()
       for (sex.var in c( "Male","Female")){
-        
+
         aov.fit<- lm(LCDM.measure~(YrsEd+age+hemi)*Diag,
                      data=all.df.lf.stg,
                       subset=(sex==sex.var)&(aggstat==agg.stat.name))
         aov.result <- Anova(aov.fit,type=3)
-        
+
         if (is.data.frame(aov.result)){
         p.vals <- aov.result$`Pr(>F)`
         } else {
@@ -377,33 +377,33 @@ for (region.for.table in c("stg" ,"mtg","itg","antcing")){
         p.vals[1]<-1
         #the last p.value is always NA
         p.vals[length(p.vals)]<-1
-        
-        
+
+
         var.names <- rownames(aov.result)
         var.names <-  gsub(" ","",var.names)
         names(p.vals)<- var.names
         p.value.for.Diag <- p.vals["Diag"]
-        
+
         p.vals["Diag"] <- 1
-        
+
         num.sig.vars <- sum(p.vals<p.cutoff)
-        
-        
-        
+
+
+
         if (num.sig.vars>0) {
-          
+
           sig.var.names <- var.names[p.vals<p.cutoff]
           sig.var.pvals <- p.vals[p.vals<p.cutoff]
           sig.var.pvals <- formatC(sig.var.pvals, digits = 3,drop0trailing=TRUE)
-          sig.covar.table.col <- paste(sig.var.names,"(p = ", sig.var.pvals ,")",sep="")          
+          sig.covar.table.col <- paste(sig.var.names,"(p = ", sig.var.pvals ,")",sep="")
         }
-                
-               
+
+
         covar.col <- rep("",5)
         pval.col <- rep("",5)
         if (num.sig.vars==0) {
           covar.col[1]<- "None"
-        } 
+        }
         else {
           covar.col[1:num.sig.vars] <- sig.covar.table.col
           covar.col[(num.sig.vars+1):5]<-""
@@ -414,7 +414,7 @@ for (region.for.table in c("stg" ,"mtg","itg","antcing")){
         aov.test.results <- rbind(aov.test.results,unit.block)
         covar.col.all.sex <- c(covar.col.all.sex,covar.col)
         pval.col.all.sex  <- c(pval.col.all.sex,pval.col)
-      }  
+      }
     }
     print(covar.col.all.sex )
     print(pval.col.all.sex )
@@ -423,8 +423,8 @@ for (region.for.table in c("stg" ,"mtg","itg","antcing")){
     print.table.merged.df<- merge(print.table.df, aov.test.results,
                                     by = c("aggstat","sex","Diag"),
                                   sort=FALSE )
-      
-  
+
+
   new.table <- list(print.table.merged.df)
   names(new.table ) <- region.for.table
   stat.tables.for.regions <- c(stat.tables.for.regions ,new.table)
@@ -433,25 +433,25 @@ for (region.for.table in c("stg" ,"mtg","itg","antcing")){
 <<SidewayTable_Creator_postcing,echo=FALSE,eval=TRUE>>=
 # Separate hemispheres only for postcing
 # Separate based on gender for all
-# Ideally the separation based on gender  would be done 
+# Ideally the separation based on gender  would be done
 # on a  measure(SA, vol,thickness) basis
 #for (region.for.table in c("stg" ,"mtg","itg",,"antcing")){
 region.for.table<- "postcing"
-print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh 
+print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   print.table.rh.df <-summ.stats.tables[[region.for.table]]$rh
   all.df.lf.stg  <- filter(all.df.lf, region==region.for.table)
   for (hemi.var in c( "lh","rh")){
     aov.test.results <- data.frame(sex=character(0),aggstat=character(0),Diag=character(0),Covariates=character(0),p_values= numeric(0))
-    
+
     for (agg.stat.name in agg.stats.names){
       covar.col.all.sex <-c()
       pval.col.all.sex <-c()
       for (sex.var in c( "Male","Female")){
-        
+
         aov.fit<- lm(LCDM.measure~YrsEd*age*Diag,data=all.df.lf.stg,
                       subset=(hemi==hemi.var)&(sex==sex.var)&(aggstat==agg.stat.name))
         aov.result <- Anova(aov.fit,type=3)
-        
+
         if (is.data.frame(aov.result)){
         p.vals <- aov.result$`Pr(>F)`
         } else {
@@ -462,33 +462,33 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
         p.vals[1]<-1
         #the last p.value is always NA
         p.vals[length(p.vals)]<-1
-        
-        
+
+
         var.names <- rownames(aov.result)
         var.names <-  gsub(" ","",var.names)
         names(p.vals)<- var.names
         p.value.for.Diag <- p.vals["Diag"]
-        
+
         p.vals["Diag"] <- 1
-        
+
         num.sig.vars <- sum(p.vals<p.cutoff)
-        
-        
-        
+
+
+
         if (num.sig.vars>0) {
-          
+
           sig.var.names <- var.names[p.vals<p.cutoff]
           sig.var.pvals <- p.vals[p.vals<p.cutoff]
           sig.var.pvals <- formatC(sig.var.pvals, digits = 3,drop0trailing=TRUE)
-          sig.covar.table.col <- paste(sig.var.names,"(p=", sig.var.pvals ,")")          
+          sig.covar.table.col <- paste(sig.var.names,"(p=", sig.var.pvals ,")")
         }
-                
-               
+
+
         covar.col <- rep("",5)
         pval.col <- rep("",5)
         if (num.sig.vars==0) {
           covar.col[1]<- "None"
-        } 
+        }
         else {
           covar.col[1:num.sig.vars] <- sig.covar.table.col
         }
@@ -498,17 +498,17 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
         aov.test.results <- rbind(aov.test.results,unit.block)
         #covar.col.all.sex <- c(covar.col.all.sex,covar.col)
         #pval.col.all.sex  <- c(pval.col.all.sex,pval.col)
-      }  
+      }
     }
-    
+
     if (hemi.var=="lh") print.table.lh.df <- merge(print.table.lh.df, aov.test.results,  by = c("aggstat","Diag","sex"),sort=FALSE )
     if  (hemi.var=="rh") print.table.rh.df <- merge(print.table.rh.df, aov.test.results,  by = c("aggstat","Diag","sex"),sort=FALSE )
-    
+
   }
-  
+
   print.table.merged.df <-merge(print.table.rh.df,print.table.lh.df, by = c("aggstat","sex","Diag"),suffixes=c(".rh",".lh"),sort=FALSE)
-  
-  
+
+
   new.table <- list(print.table.merged.df)
   names(new.table ) <- region.for.table
   stat.tables.for.regions <- c(stat.tables.for.regions ,new.table)
@@ -539,14 +539,14 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   table.out <- xtable(stat.tables.for.regions[["stg"]])
   print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
   @
-	
+
                 \end{tabular}
 	\caption{\textbf{STG  Measure}.  Statistics for each geometric feature of the STG.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
 	\label{Wave1.STG.ANCOVA.b}
   \end{sidewaystable}
-  
-  
-  
+
+
+
   \newpage
 \begin{sidewaystable}
   \centering
@@ -563,7 +563,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   table.out <- xtable(stat.tables.for.regions[["mtg"]])
   print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
   @
-	
+
                 \end{tabular}
 	\caption{\textbf{MTG  Measure}.  Statistics for each geometric feature of the MTG.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
 	\label{Wave1.MTG.ANCOVA.b}
@@ -587,7 +587,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   table.out <- xtable(stat.tables.for.regions[["itg"]])
   print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
   @
-	
+
                 \end{tabular}
 	\caption{\textbf{ITG  Measure}.  Statistics for each geometric feature of the ITG.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
 	\label{Wave1.ITG.ANCOVA.b}
@@ -605,11 +605,11 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 	\multicolumn{1}{l|}{Measure} \T\B & Gender & Diag & Mean & SD & Covariate & P & Mean & SD & Covariate & P \\
 	\hline\hline
 	<<Table_3_postcing, results='asis', eval=TRUE,echo=FALSE>>=
-  
+
   table.out <- xtable(stat.tables.for.regions[["postcing"]])
   print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
   @
-	
+
                 \end{tabular}
 	\caption{\textbf{Posterior Cingulate  Measure}.  Statistics for each geometric feature of the Posterior Cingulate.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
 	\label{Wave1.postcing.ANCOVA.b}
@@ -634,7 +634,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   table.out <- xtable(stat.tables.for.regions[["antcing"]])
   print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE,hline.after=5*(1:6))
   @
-	
+
                 \end{tabular}
 	\caption{\textbf{Anterior Cingulate  Measure}.  Statistics for each geometric feature of the Anterior Cingulate.  ANCOVA results showing significant covariates. T=thickness, V=volume, and S=surface area.}
 	\label{Wave1.antcing.ANCOVA.b}
@@ -648,21 +648,21 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   conditions  = c("normal","aMCI","amdMCI","nMCI","nmdMCI")
   comparisons = t(array(c(1,2,1,3,1,4,1,5,2,3,2,4,4,5),dim = c(2,7)))
   hypothesis_ordinality <- c("two.sided","less","greater")
-  
+
   pool_stat_tests_all_regions_sides <- matrix(list(), nrow=2,ncol=5,dimnames = list(sides=sides,regions=regions))
-  
+
   print (str(pool_stat_tests_all_regions_sides))
   #pool_stats_all <-  matrix(nrow=2,ncol=5,dimnames = list(sides=sides,regions=regions))
   #pool_stats_all <- list(NULL, names=)
   for ( side in sides) {
-    
+
     for ( region in regions ) {
-      
+
       pooled_stats_list = list()
-      
-      #read the pooled files 
+
+      #read the pooled files
       for (i in 1:5) {
-        cond_fileh <- paste(DATA_DIR,"/",side,'_',region,"_", conditions[i], 
+        cond_fileh <- paste(DATA_DIR,"/",side,'_',region,"_", conditions[i],
                             "_wave1_pooled_antsy.txt", sep="", collapse ="")
         print (cond_fileh)
         if (! file.exists(cond_fileh)) {
@@ -681,7 +681,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
       #print(str(pooled_stats_list))
       #pool_stats_all[side,region] <- c(pool_stats_all[side,region],pooled_stats_list)
       #pool_stats_all[side,region] <- pooled_stats_list
-      
+
       #run the stat tests for the 7 pair comparisons. We may want to limi
       pooled_test_results<-list()
       for ( i in 1:7 ) {
@@ -689,43 +689,43 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
       }
       empty.df <- data.frame( two.sided=rep(0,7),less= rep(0,7),greater=rep(0,7) )
       p_values<-list(mwu.test=empty.df, ks.test = empty.df, welch.t.test=empty.df)
-      
+
       for ( i in 1:7 ) {
         cond_1 = comparisons[i,1]
         cond_2 = comparisons[i,2]
         pooled_test_results[[i]] <-list(two.sided=list(),less=list(),greater=list())
         for (test.type in  hypothesis_ordinality) {
-        
-        
+
+
         kolmog.test.result<- ks.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
                                            alternative=test.type,exact = NULL)
         p_values$ks.test[i,][test.type] <-kolmog.test.result$p.value
-        
+
         wilcox.test.result <- wilcox.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
                                                alternative=test.type,exact = FALSE,
                                                correct = FALSE)
         p_values$mwu.test[i,][test.type] <-wilcox.test.result$p.value
-        welch.t.test.result <- t.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],    
-                                           alternative = test.type,mu = 0, paired = FALSE, 
+        welch.t.test.result <- t.test(pooled_stats_list[[cond_2]], pooled_stats_list[[cond_1]],
+                                           alternative = test.type,mu = 0, paired = FALSE,
                                            var.equal = FALSE, conf.level = 0.95)
-        
+
         p_values$welch.t.test[i,][test.type] <-welch.t.test.result$p.value
        pooled_test_results[[i]][[test.type]]<-vector(mode="list",length = 3 )
        #print(str(pooled_test_results[[i]][[test.type]]))
        pooled_test_results[[i]][[test.type]]<-list(ks.test=kolmog.test.result,wilcox.test = wilcox.test.result,t.test= welch.t.test.result)
        #print(str(pooled_test_results[[i]][[test.type]]))
       }
-      
+
     }
     pool_stat_tests_all_regions_sides[side,region] <- list(pooled_test_results)
   }
 }
-  
+
 
 @
 
 <<echo=FALSE, results='asis' >>=
-  
+
   cond_1 = conditions[comparisons[,1]]
   cond_2 = conditions[comparisons[,2]]
   comparison_strings <- paste(cond_1,cond_2, sep =" vs ")
@@ -733,7 +733,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   col_names <- outer(hypothesis_ordinality,test_names,paste,  sep=".")
   p_value_table_names <-expand.grid(comparison_strings, col_names)
   p_value_table <- matrix(0,nrow = 7,ncol = 9)
-  
+
   for (side in sides){
     for ( i in 1:7 ) {
       for (j in 1:3){
@@ -741,14 +741,17 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
         for (k in 0:2){
           test.name <- names(pooled_test_results[[i]][[test.type]][(k+1)])
         p_value_table[i,j + (k*3)] <- pooled_test_results[[i]][[test.type]][[test.name]]$p.value
-        
+
         }
       }
-      
+
     }
   }
   colnames(p_value_table)<- col_names
-  xtab.out <- xtable(p_value_table)
+  p_value_table_print <- mapply(p_value_table, function(x){if (x<1E-4) return ("<0.0001") else{
+    return(as.character(x,digits=4))
+  }})
+  xtab.out <- xtable(p_value_table_print)
   addtorow <- list()
   addtorow$pos <- list(0)
   addtorow$command <- paste0(paste0('& \\multicolumn{3}{c}{', c("KS test","MWU test", "Welch's t-test"), '}', collapse=''), '\\\\')
@@ -756,7 +759,8 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
     include.rownames=FALSE,
     type="latex")
 # create a table of 7 comparisons
-# 
+#
+
 
 @
 
@@ -826,5 +830,3 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 
 
 \end{document}
-
-
