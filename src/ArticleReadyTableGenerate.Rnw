@@ -729,7 +729,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
    if (x<1E-4) {
    return ("<0.0001") 
    } else {
-    return (as.character(x,digits=4))
+    return (format(x,digits=4))
    }
  }
   make_matrix_printable <- Vectorize(convert_to_paper_style)
@@ -758,14 +758,16 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   table_dims<- dim(p_value_table)
   p_value_table_print <- make_matrix_printable(p_value_table )
   dim(p_value_table_print) <- table_dims
+  colnames(p_value_table_print) <- col_names
+  rownames(p_value_table_print) <- comparison_strings
   print(str(p_value_table_print))
   
-  xtab.out <- xtable(p_value_table_print)
+  xtab.out <- xtable(as.data.frame(p_value_table_print  ) )
   addtorow <- list()
-  addtorow$pos <- list(0)
+  addtorow$pos <- list(-1)
   addtorow$command <- paste0(paste0('& \\multicolumn{3}{c}{', c("KS test","MWU test", "Welch's t-test"), '}', collapse=''), '\\\\')
   print.xtable (xtab.out, add.to.row = addtorow, only.contents=TRUE,
-    include.rownames=FALSE,
+    include.rownames=TRUE, include.colnames = TRUE,
     type="latex")
 # create a table of 7 comparisons
 #
