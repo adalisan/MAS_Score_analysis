@@ -724,6 +724,16 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 
 @
 
+\begin{table}[t]
+  \centering
+	\begin{tabular}{rrrrrrr}
+		\hline
+
+	\end{tabular}
+	\caption{\textbf{Summary of data used for MCI analysis}.  Summary statistics on the number, age, and years of education of individuals used for the analysis.  Data broken down based on gender and diagnosis.}
+	\label{wave1data}
+\end{table}
+
 <<echo=FALSE, results='asis' >>=
  convert_to_paper_style <- function(x) {
    if (x<1E-4) {
@@ -732,15 +742,23 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
     return (format(x,digits=4))
    }
  }
+  simp.colnames<- function(x) {
+     y = lapply(x,strsplit,"_",fixed=TRUE)
+     #return(y)
+     z = sapply(y , function(l) l[[1]][[1]])
+     #z = gsub(".", " ",y)
+    return (z)
+  }
   make_matrix_printable <- Vectorize(convert_to_paper_style)
   cond_1 = conditions[comparisons[,1]]
   cond_2 = conditions[comparisons[,2]]
   comparison_strings <- paste(cond_1,cond_2, sep =" vs ")
   test_names <- c("KS test","MWU test", "Welch's t-test")
-  col_names <- outer(hypothesis_ordinality,test_names,paste,  sep=".")
+  col_names <- outer(hypothesis_ordinality,test_names,paste,  sep="_")
   p_value_table_names <-expand.grid(comparison_strings, col_names)
   p_value_table <- matrix(0,nrow = 7,ncol = 9)
-
+  p_val_table_list<-list()
+  xtablelist<- list()
   for (side in sides){
     for ( i in 1:7 ) {
       for (j in 1:3){
@@ -753,25 +771,29 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
       }
 
     }
-  }
-  colnames(p_value_table)<- col_names
+    colnames(p_value_table)<- col_names
   table_dims<- dim(p_value_table)
   p_value_table_print <- make_matrix_printable(p_value_table )
   dim(p_value_table_print) <- table_dims
   colnames(p_value_table_print) <- col_names
   rownames(p_value_table_print) <- comparison_strings
-  print(str(p_value_table_print))
+  #print(str(p_value_table_print))
   
-  xtab.out <- xtable(as.data.frame(p_value_table_print  ) )
+  xtab.out <- xtable( as.data.frame(p_value_table_print  ) )
+  p_val_table_list[[side]]<- p_value_table_print
+  xtablelist[[side]]<-xtab.out
+  
+
+  }
+   attr(p_val_table_list, "subheadings") <- paste0("Hemisphere : ",names(p_val_table_list))
+   xtablelist <- xtableList(p_val_table_list)
   addtorow <- list()
   addtorow$pos <- list(-1)
   addtorow$command <- paste0(paste0('& \\multicolumn{3}{c}{', c("KS test","MWU test", "Welch's t-test"), '}', collapse=''), '\\\\')
-  print.xtable (xtab.out, add.to.row = addtorow, only.contents=TRUE,
-    include.rownames=TRUE, include.colnames = TRUE,
+  print.xtableList (xtablelist, add.to.row = addtorow, only.contents=FALSE,
+    include.rownames=TRUE, sanitize.colnames.function = simp.colnames,
     type="latex")
 # create a table of 7 comparisons
-#
-
 
 @
 
