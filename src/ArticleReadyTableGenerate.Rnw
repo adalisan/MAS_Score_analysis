@@ -44,7 +44,7 @@ library(foreign)
 library(dplyr)
 library(xtable)
 HOME_DIR <- Sys.getenv("HOME")
-print(HOME_DIR)
+#print(HOME_DIR)
 opts_knit$set(root.dir=paste0(Sys.getenv("HOME"),"/projects/MAS_Score_Analysis/",sep="",collapse=""))
 #setwd("./projects/MAS_Score_Analysis")
 #setwd( paste0(Sys.getenv("HOME"),"/projects/MAS_Score_Analysis/"))
@@ -116,25 +116,25 @@ print(fig.1)
 @
 
 
-<<ICVStats,eval=TRUE,error=TRUE,echo=FALSE>>=
+<<ICVStats,eval=TRUE,error=TRUE,echo=FALSE,results="hide">>=
 require(car)
 aov.fit<- lm(ICV_W1~YrsEd+age+sex+Diag,data=all.df)
 aov.result.type3 <- Anova(aov.fit,type="III")
 aov.result <- aov(aov.fit)
 # Does ICV show a trend level  group difference (Is p-value for Diag sig?)
-print("ICVStats ANOVA with covars")
-print(aov.result.type3)
+#print("ICVStats ANOVA with covars")
+#print(aov.result.type3)
 
 
 
 # Does ICV show a trend level  group difference (Is p-value for Diag sig?)
-print("ICVStats ANOVA")
-print(aov.result)
+#print("ICVStats ANOVA")
+#print(aov.result)
 
 # Result shows Diag is not significant and can be not included in the rest of the analysis
 @
 
-<<ICVStats_plot,  eval=TRUE,echo=FALSE>>=
+<<ICVStats_plot,  eval=TRUE,echo=FALSE,results="asis">>=
 summary_table_2.df  <- summarize (grouping_gender_diag, mean_ICV=mean(ICV_W1,na.rm=T), sd_ICV=sd(ICV_W1,na.rm=T))
 
 summary_table_2.df.m <- filter(summary_table_2.df,sex=="Male")
@@ -149,13 +149,13 @@ aov.result.summary <- summary(aov.result)
 if (!is.data.frame(aov.result.summary)){
 aov.result.summary  <- aov.result.summary[[1]]
 }
-print(table.out, include.rownames=FALSE,include.colnames=TRUE)
+
 
 p_vals <- formatC(aov.result.summary$`Pr(>F)` [1:3], digits = 3,drop0trailing=TRUE)
-print (aov.result.summary)
+#print (aov.result.summary)
 Covariate_names <- rownames(aov.result.summary)[1:3]
-print(str(aov.result.summary))
-print(Covariate_names)
+#print(str(aov.result.summary))
+#print(Covariate_names)
 cov_column <- paste(Covariate_names,"(p = ",p_vals,")",sep="")
 cov_column <- c(cov_column,rep("",2))
 cov_column_2 <-c ("", paste("p = ",aov.result.summary$`Pr(>F)` [4],")",sep=""),"")
@@ -164,6 +164,7 @@ cov_column_2 <- c(cov_column_2,rep("",2))
 cov_test_cols<-data.frame(Covariate=cov_column,p.value=cov_column_2)
 table.out<-xtable(cbind(print.table.df,print.table2.df[,2:3],cov_test_cols))
 
+print(table.out, include.rownames=FALSE,include.colnames=TRUE)
 @
 
 
@@ -187,15 +188,17 @@ table.out<-xtable(cbind(print.table.df,print.table2.df[,2:3],cov_test_cols))
 \end{table}
 
 <<subregion_sideway_table_summary_stats,eval=TRUE,echo=FALSE>>=
+#print("subregion_sideway_table_summary_stats")
 stat.tables.for.regions <- list()
 summ.stats.tables<-list(stg=list(),mtg=list(),itg=list(),postcing=list(),antcing=list())
 for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
   all.df.lf.stg    <- filter(all.df.lf, region==region.for.table)
-
+  
 
   all.df.lf.stg.lh <- filter(all.df.lf.stg,hemi=="lh")
   all.df.lf.stg.rh <- filter(all.df.lf.stg,hemi=="rh")
 
+  all.df.lf.stg.lh$aggstat<- as.factor(all.df.lf.stg.lh$aggstat)
   all.df.lf.stg.lh.grp<- group_by(all.df.lf.stg.lh, aggstat, sex,Diag)
   all.df.lf.stg.rh.grp<- group_by(all.df.lf.stg.rh, aggstat, sex,Diag)
 
@@ -214,7 +217,7 @@ for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
                                               rh= print.table.rh.df)
 
 }
-print(str(summ.stats.tables))
+#print(str(summ.stats.tables))
 @
 
 <<ANOVA_Diagnostic_Analysis, echo=FALSE,eval=FALSE>>=
@@ -307,6 +310,7 @@ for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
 
 print(paste0("Diagnostics for Subregion = ",region.for.table," ",
              measure.name ))
+    print(names(all.df.lf))
     all.df.lf.stg    <- filter(all.df.lf, region==region.for.table & aggstat==measure.name)
 all.df.lf.stg <- setupAnova(all.df.lf.stg)
 
@@ -416,8 +420,8 @@ for (region.for.table in c("stg" ,"mtg","itg","antcing")){
         pval.col.all.sex  <- c(pval.col.all.sex,pval.col)
       }
     }
-    print(covar.col.all.sex )
-    print(pval.col.all.sex )
+    #print(covar.col.all.sex )
+    #print(pval.col.all.sex )
     print.table.df <- merge(print.table.rh.df,print.table.lh.df,
                         by = c("aggstat","sex","Diag"),sort=FALSE)
     print.table.merged.df<- merge(print.table.df, aov.test.results,
@@ -651,7 +655,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 
   pool_stat_tests_all_regions_sides <- matrix(list(), nrow=2,ncol=5,dimnames = list(sides=sides,regions=regions))
 
-  print (str(pool_stat_tests_all_regions_sides))
+  #print (str(pool_stat_tests_all_regions_sides))
   #pool_stats_all <-  matrix(nrow=2,ncol=5,dimnames = list(sides=sides,regions=regions))
   #pool_stats_all <- list(NULL, names=)
   for ( side in sides) {
@@ -664,14 +668,14 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
       for (i in 1:5) {
         cond_fileh <- paste(DATA_DIR,"/",side,'_',region,"_", conditions[i],
                             "_wave1_pooled_antsy.txt", sep="", collapse ="")
-        print (cond_fileh)
+        #print (cond_fileh)
         if (! file.exists(cond_fileh)) {
           print (paste0( cond_fileh,
                          " does not exist",sep="",collapse="") )
         }
         #pooled_stats <-read.table(file=cond_fileh, nrows = 2.5E6, colClasses = "numeric")
         pooled_stats <- scan(file=cond_fileh)
-        print (str(pooled_stats_list))
+        #print (str(pooled_stats_list))
         if ( is.data.frame(pooled_stats_list) ) {
           pooled_stats <- as.vector(pooled_stats[,1])
         }
@@ -724,17 +728,8 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 
 @
 
-\begin{table}[t]
-  \centering
-	\begin{tabular}{rrrrrrr}
-		\hline
 
-	\end{tabular}
-	\caption{\textbf{Summary of data used for MCI analysis}.  Summary statistics on the number, age, and years of education of individuals used for the analysis.  Data broken down based on gender and diagnosis.}
-	\label{wave1data}
-\end{table}
-
-<<echo=FALSE, results='asis' >>=
+<<echo=FALSE, results='asis',cache=FALSE >>=
  convert_to_paper_style <- function(x) {
    if (x<1E-4) {
    return ("<0.0001") 
@@ -756,10 +751,16 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   test_names <- c("KS test","MWU test", "Welch's t-test")
   col_names <- outer(hypothesis_ordinality,test_names,paste,  sep="_")
   p_value_table_names <-expand.grid(comparison_strings, col_names)
+  @
+
+<<echo=FALSE, results='asis',cache=FALSE >>=
+  for (region in regions) { 
   p_value_table <- matrix(0,nrow = 7,ncol = 9)
   p_val_table_list<-list()
   xtablelist<- list()
   for (side in sides){
+    
+    pooled_test_results = pool_stat_tests_all_regions_sides[side,region][[1]]
     for ( i in 1:7 ) {
       for (j in 1:3){
         test.type <-  hypothesis_ordinality[j]
@@ -772,7 +773,7 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 
     }
     colnames(p_value_table)<- col_names
-  table_dims<- dim(p_value_table)
+    table_dims<- dim(p_value_table)
   p_value_table_print <- make_matrix_printable(p_value_table )
   dim(p_value_table_print) <- table_dims
   colnames(p_value_table_print) <- col_names
@@ -783,83 +784,27 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
   p_val_table_list[[side]]<- p_value_table_print
   xtablelist[[side]]<-xtab.out
   
+  
 
   }
-   attr(p_val_table_list, "subheadings") <- paste0("Hemisphere : ",names(p_val_table_list))
-   xtablelist <- xtableList(p_val_table_list)
-  addtorow <- list()
-  addtorow$pos <- list(-1)
-  addtorow$command <- paste0(paste0('& \\multicolumn{3}{c}{', c("KS test","MWU test", "Welch's t-test"), '}', collapse=''), '\\\\')
-  print.xtableList (xtablelist, add.to.row = addtorow, only.contents=FALSE,
+   attr(p_val_table_list, "subheadings") <- paste0("Hemisphere : ",c("Left","Right"))
+   xtablelist <- xtableList(p_val_table_list, caption = paste0("Hypothesis Tests based on pooled LCDM statistics for ",region,collapse= ""))
+   col.names <- c("KS test","MWU test", "Welch's t-test")
+   # Region & \multicolumn{3}{l}{KS test} & \multicolumn{3}{l}{MWU test} & \multicolumn{3}{l}{Welch's t-test}\\
+  rowcom <- list()
+  rowcom$pos = list(-1)
+  rowcom$command = paste0(paste0("Region",paste0(" & \\multicolumn{3}{c}{", col.names , '}', collapse=''),collapse=''), '\\\\')
+  #print(addtorow)
+  print(xtablelist, add.to.row = rowcom, only.contents=FALSE,
     include.rownames=TRUE, sanitize.colnames.function = simp.colnames,
-    type="latex")
+    type="latex",floating.environment = "sidewaystable")
+  }
+  
 # create a table of 7 comparisons
 
 @
 
 
-
-\newpage
-\begin{sidewaystable}
-	\centering
-	\footnotesize
-	\begin{tabular}{rr|rrr|rrr|rrr}
-		\hline
-		\multicolumn{2}{c|}{Region} \T\B & \multicolumn{3}{c|}{KS test} & \multicolumn{3}{c|}{MWU test} & \multicolumn{3}{c}{Welch's t-test} \\
-		& & two-sided & less & greater & two-sided & greater & less & two-sided & greater & less \\ \hline
-		& aMCI vs norm\T & $<$.0001 & .0832 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		rh stg & nMCI vs norm & $<$.0001 & $<$.0001 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		& aMCI vs nMCI\T & $<$.0001 & .5210 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
-		& aMCI vs norm & $<$.0001 & .9794 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		lh stg & nMCI vs norm & $<$.0001 & .9983 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		& aMCI vs nMCI & $<$.0001 & $<$.0001 & $<$.0001 & .0128 & .0064  & .9936 & $<$.0001 & $<$.0001 & 1 \\ \hline
-		& aMCI vs norm\T & $<$.0001 & $<$.0001 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		rh stg & nMCI vs norm & $<$.0001 & .0121 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		(women)& aMCI vs nMCI & $<$.0001 & $<$.0001 & .0086 & .1065 & .0533 & .9467 & $<$.0001 & $<$.0001 & 1 \\ \hline
-		& aMCI vs norm\T & $<$.0001 & .9989 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		lh stg & nMCI vs norm & $<$.0001 & .9998 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		(women)& aMCI vs nMCI & $<$.0001 & $<$.0001 & .0032 & .0060 & .0030 & .9970 & $<$.0001 & $<$.0001 & 1 \\ \hline
-		& aMCI vs norm\T & $<$.0001 & .0396 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		rh mtg & nMCI vs norm & $<$.0001 & $<$.0001 & $<$.0001 & .5428 & .7286 & .2714 & $<$.0001 & 1 & $<$.0001 \\
-		& aMCI vs nMCI & $<$.0001 & .4099 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
-		& aMCI vs norm\T & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		lh mtg & nMCI vs norm & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1  & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		& aMCI vs nMCI & $<$.0001 & .0296 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
-		& aMCI vs norm\T &  $<$.0001 & $<$.0001 & $<$.0001 & .5723 & NA & NA & .8289 & NA & NA \\
-		rh itg & nMCI vs norm & $<$.0001 & $<$.0001 & .7620 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
-		& aMCI vs nMCI & $<$.0001 & .5502 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\ \hline
-		& aMCI vs norm\T &  $<$.0001 & .8740 & $<$.0001 &  $<$.0001 & 1 & $<$.0001 &  $<$.0001 & 1 & $<$.0001 \\
-		lh itg & nMCI vs norm & $<$.0001 & .7938 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		& aMCI vs nMCI & $<$.0001 & .8740 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-	\end{tabular}
-	\caption{\textbf{Temporal Lobe Pooled LCDM Analysis Results.}  Showing p-values obtained from nonparametric distribution tests.}
-	\label{Wave1.TL.nonpara}
-\end{sidewaystable}
-
-\newpage
-\begin{sidewaystable}
-	\centering
-	\footnotesize
-	\begin{tabular}{rr|rrr|rrr|rrr}
-		\hline
-		\multicolumn{2}{c|}{Region} \T\B & \multicolumn{3}{c|}{KS test} & \multicolumn{3}{c|}{MWU test} & \multicolumn{3}{c}{Welch's t-test} \\
-		& & two-sided & less & greater & two-sided & greater & less & two-sided & greater & less \\ \hline
-		& aMCI vs norm\T &  $<$.0001 & $<$.0001 & .9896 &  $<$.0001 & $<$.0001 & 1 &  $<$.0001 & $<$.0001 & 1 \\
-		rh antcing & nMCI vs norm & .0047 & .0024 & .9696 & .0496 & .0248 & .9752 & .0463 & .0232 & .9768 \\
-		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9986 & $<$.0001 & $<$.0001 & .9986 & $<$.0001 & $<$.0001 & 1 \\ \hline
-		& aMCI vs norm\T & $<$.0001 & $<$.0001 & .8789 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
-		lh antcing & nMCI vs norm & $<$.0001 & $<$.0001 & .6552 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
-		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9725 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\ \hline
-		& aMCI vs norm\T & .0001 & $<$.0001 & .0043 & .2136 & .1068 & .8932 & .5986 & .2993 & .7007 \\
-		rh postcing & nMCI vs norm & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .9786 & $<$.0001 & $<$.0001 & .9786 & $<$.0001 & $<$.0001 & 1 \\ \hline
-		& aMCI vs norm\T & $<$.0001 & .9911 & $<$.0001 & $<$.0001 & 1 & $<$.0001  & $<$.0001 & 1 & $<$.0001  \\
-		lh postcing & nMCI vs norm & $<$.0001 & .9971 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 & $<$.0001 \\
-		& aMCI vs nMCI & $<$.0001 & $<$.0001 & .8553 & $<$.0001 & $<$.0001 & 1 & $<$.0001 & $<$.0001 & 1 \\
-	\end{tabular}
-	\caption{\textbf{Cingulate Gryus Pooled LCDM Analysis Results}   Showing p-values obtained from nonparametric distribution tests.}
-	\label{Wave1.cing.nonpara}
-\end{sidewaystable}
 
 
 \end{document}
