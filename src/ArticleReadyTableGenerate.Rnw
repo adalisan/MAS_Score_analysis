@@ -755,49 +755,50 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
 
 <<echo=FALSE, results='asis',cache=FALSE >>=
   for (region in regions) { 
-  p_value_table <- matrix(0,nrow = 7,ncol = 9)
-  p_val_table_list<-list()
-  xtablelist<- list()
-  for (side in sides){
+    p_value_table <- matrix(0,nrow = 7,ncol = 9)
+    p_val_table_list <- list()
+    xtablelist <- list()
+    for (side in sides){
     
-    pooled_test_results = pool_stat_tests_all_regions_sides[side,region][[1]]
-    for ( i in 1:7 ) {
-      for (j in 1:3){
-        test.type <-  hypothesis_ordinality[j]
-        for (k in 0:2){
-          test.name <- names(pooled_test_results[[i]][[test.type]][(k+1)])
-        p_value_table[i,j + (k*3)] <- pooled_test_results[[i]][[test.type]][[test.name]]$p.value
-
+      pooled_test_results = pool_stat_tests_all_regions_sides[side,region][[1]]
+      for ( i in 1:7 ) {
+        for (j in 1:3){
+          test.type <-  hypothesis_ordinality[j]
+          for (k in 0:2){
+            test.name <- names(pooled_test_results[[i]][[test.type]][(k+1)])
+          p_value_table[i,j + (k*3)] <- pooled_test_results[[i]][[test.type]][[test.name]]$p.value
+  
+          }
         }
+
       }
-
+      colnames(p_value_table)<- col_names
+      table_dims<- dim(p_value_table)
+      p_value_table_print <- make_matrix_printable(p_value_table )
+      dim(p_value_table_print) <- table_dims
+      colnames(p_value_table_print) <- col_names
+      rownames(p_value_table_print) <- comparison_strings
+      #print(str(p_value_table_print))
+  
+      xtab.out <- xtable( as.data.frame(p_value_table_print  ) )
+      p_val_table_list[[side]]<- p_value_table_print
+      xtablelist[[side]]<-xtab.out
     }
-    colnames(p_value_table)<- col_names
-    table_dims<- dim(p_value_table)
-  p_value_table_print <- make_matrix_printable(p_value_table )
-  dim(p_value_table_print) <- table_dims
-  colnames(p_value_table_print) <- col_names
-  rownames(p_value_table_print) <- comparison_strings
-  #print(str(p_value_table_print))
-  
-  xtab.out <- xtable( as.data.frame(p_value_table_print  ) )
-  p_val_table_list[[side]]<- p_value_table_print
-  xtablelist[[side]]<-xtab.out
-  
-  
-
-  }
-   attr(p_val_table_list, "subheadings") <- paste0("Hemisphere : ",c("Left","Right"))
-   xtablelist <- xtableList(p_val_table_list, caption = paste0("Hypothesis Tests based on pooled LCDM statistics for ",region,collapse= ""))
-   col.names <- c("KS test","MWU test", "Welch's t-test")
-   # Region & \multicolumn{3}{l}{KS test} & \multicolumn{3}{l}{MWU test} & \multicolumn{3}{l}{Welch's t-test}\\
-  rowcom <- list()
-  rowcom$pos = list(-1)
-  rowcom$command = paste0(paste0("Region",paste0(" & \\multicolumn{3}{c}{", col.names , '}', collapse=''),collapse=''), '\\\\')
-  #print(addtorow)
-  print(xtablelist, add.to.row = rowcom, only.contents=FALSE,
-    include.rownames=TRUE, sanitize.colnames.function = simp.colnames,
-    type="latex",floating.environment = "sidewaystable")
+    attr(p_val_table_list, "subheadings") <- paste0("Hemisphere : ",c("Left","Right"))
+    xtablelist <- xtableList(p_val_table_list, caption = paste0("Hypothesis Tests based on pooled LCDM statistics for ",region,collapse= ""))
+    col.names <- c("KS test","MWU test", "Welch's t-test")
+    # Region & \multicolumn{3}{l}{KS test} & \multicolumn{3}{l}{MWU test} & \multicolumn{3}{l}{Welch's t-test}\\
+    rowcom <- list()
+    rowcom$pos = list(-1)
+    rowcom$command = paste0(paste0("Region",paste0(" & \\\\multicolumn{3}{c}{", col.names , '}', collapse=''),collapse='')," \\\\ " ,collapse="")
+    print(rowcom$command)
+    xtablelist.out<-print(xtablelist, only.contents=FALSE,
+      include.rownames=TRUE, sanitize.colnames.function = simp.colnames,
+      type="latex",floating.environment = "sidewaystable", print.results = FALSE)
+    second_heading <- "(\\\\begin\\{tabular\\}.*)" 
+    xtablelist.out <- gsub( xtablelist.out, pattern = second_heading, perl =  TRUE,fixed=FALSE,
+    replacement =  paste0( "\\1", "\n", rowcom$command, collapse = '') )
+    cat(xtablelist.out,sep="\n")
   }
   
 # create a table of 7 comparisons
