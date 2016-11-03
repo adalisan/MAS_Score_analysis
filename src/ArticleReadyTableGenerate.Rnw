@@ -72,7 +72,7 @@ summary_table_1.df <- arrange(summary_table_1.df,Diag,sex)
 		\hline
 		Diag \T& Gender & Number & \multicolumn{2}{c}{Age (Yrs)} & \multicolumn{2}{c}{YrsEd (Yrs)} \\
 		& \B & & Mean & SD & Mean & SD \\ \hline
-<<Table_1_summarystats, results='asis', eval=TRUE,echo=FALSE,cache=FALSE>>=
+<<Table_1_summarystats, results='asis', eval=TRUE,echo=FALSE,cache=FALSE,message=FALSE,warning=FALSE>>=
   class(summary_table_1.df)<-"data.frame"
   table.out <- xtable(summary_table_1.df)
   print.xtable(table.out, only.contents=TRUE, include.rownames=FALSE,include.colnames=FALSE)
@@ -83,7 +83,7 @@ summary_table_1.df <- arrange(summary_table_1.df,Diag,sex)
 	\label{wave1data}
 \end{table}
 
-<<diag.plot.ICV_1,fig.show='hide',results='asis',echo=FALSE>>=
+<<diag.plot.ICV_1,fig.show='hide',results='asis',echo=FALSE,message=FALSE,warning=FALSE>>=
 #Gender, age, ICV, ED.year, hemisphere
 library(ggplot2)
 library(reshape2)
@@ -187,8 +187,11 @@ print(table.out, include.rownames=FALSE,include.colnames=TRUE)
 	\label{Wave1.ICV.stats}
 \end{table}
 
-<<subregion_sideway_table_summary_stats,eval=TRUE,echo=FALSE>>=
+<<subregion_sideway_table_summary_stats,eval=TRUE,echo=FALSE,message=FALSE>>=
 #print("subregion_sideway_table_summary_stats")
+  
+library(dplyr)
+
 stat.tables.for.regions <- list()
 summ.stats.tables<-list(stg=list(),mtg=list(),itg=list(),postcing=list(),antcing=list())
 for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
@@ -199,6 +202,9 @@ for (region.for.table in c("stg" ,"mtg","itg","postcing","antcing")){
   all.df.lf.stg.rh <- filter(all.df.lf.stg,hemi=="rh")
 
   all.df.lf.stg.lh$aggstat<- as.factor(all.df.lf.stg.lh$aggstat)
+  
+  all.df.lf.stg.rh$aggstat<- as.factor(all.df.lf.stg.rh$aggstat)
+
   all.df.lf.stg.lh.grp<- group_by(all.df.lf.stg.lh, aggstat, sex,Diag)
   all.df.lf.stg.rh.grp<- group_by(all.df.lf.stg.rh, aggstat, sex,Diag)
 
@@ -785,19 +791,26 @@ print.table.lh.df <- summ.stats.tables[[region.for.table]]$lh
       xtablelist[[side]]<-xtab.out
     }
     attr(p_val_table_list, "subheadings") <- paste0("Hemisphere : ",c("Left","Right"))
-    xtablelist <- xtableList(p_val_table_list, caption = paste0("Hypothesis Tests based on pooled LCDM statistics for ",region,collapse= ""))
+    xtablelist <- xtableList(p_val_table_list, caption = paste0("Hypothesis Tests based on pooled LCDM statistics for ",region,collapse= ""),
+                             align = 'l|ccc|ccc|ccc')
     col.names <- c("KS test","MWU test", "Welch's t-test")
+    
+    
     # Region & \multicolumn{3}{l}{KS test} & \multicolumn{3}{l}{MWU test} & \multicolumn{3}{l}{Welch's t-test}\\
     rowcom <- list()
     rowcom$pos = list(-1)
-    rowcom$command = paste0(paste0("Region",paste0(" & \\\\multicolumn{3}{c}{", col.names , '}', collapse=''),collapse='')," \\\\ " ,collapse="")
-    print(rowcom$command)
+    rowcom$command = paste0(paste0(" Region",paste0(" & \\\\multicolumn{3}{c}{", col.names , '}', collapse=''),collapse=''))
+    #print(rowcom$command)
     xtablelist.out<-print(xtablelist, only.contents=FALSE,
       include.rownames=TRUE, sanitize.colnames.function = simp.colnames,
-      type="latex",floating.environment = "sidewaystable", print.results = FALSE)
-    second_heading <- "(\\\\begin\\{tabular\\}.*)" 
+      type="latex",floating.environment = "sidewaystable", print.results = FALSE,hline.after = c(-1))
+    
+    second_heading <- "(\\\\begin\\{tabular\\}.*\\})" 
     xtablelist.out <- gsub( xtablelist.out, pattern = second_heading, perl =  TRUE,fixed=FALSE,
-    replacement =  paste0( "\\1", "\n", rowcom$command, collapse = '') )
+    replacement =  paste0( "\\1", "\n", rowcom$command,' ','\\',' \\ ', collapse = '') )
+    xtablelist.out <- gsub( xtablelist.out, pattern = '\\hline',fixed=TRUE,
+    replacement =  paste0( "\\\\ \\hline", collapse = '') )
+    #print (xtablelist.out)
     cat(xtablelist.out,sep="\n")
   }
   
