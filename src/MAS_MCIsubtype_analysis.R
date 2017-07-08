@@ -1,8 +1,12 @@
+#! /usr/bin/env R
+# R script to read original data files from MCI diagnosis  and MRI features 
+# do ANOVA Analysis
 library(foreign)
 #Read cognitive score and Dx files
 HOME_DIR <- Sys.getenv("HOME")
 
-setwd(paste0(HOME_DIR,"/projects/MAS_Score_Analysis/",collapse=""))
+setwd(paste0(HOME_DIR,"/projects/MAS_Score_Analysis/", collapse=""))
+print (paste0("starting analysis at"))
 MAS.normal.df <- read.spss("./data/M_w123_npsych_v20130718/M_all_npsych_normal_v20120921.sav")
 
 MAS.normal.df<- as.data.frame(MAS.normal.df[c(1:17,143:180,184:203,207:209)])
@@ -19,25 +23,25 @@ subclass.df<-as.data.frame(MCI_class[c(1:3,7,8,11,27,44)])
 
 
 
-# Merge files
+# Merge files from different Waves of  patient enrollment
 W1_dir_tag <- "_MAS.20100921"
 W1_dir_tag_s <- "_MAS.20110324"
 W2_dir_tag <- "_wave2"
 subregions <- outer(c("lh_","rh_"),c("stg","itg","mtg","antcing","postcing"),paste0)
 
 
-# Read (prev. computed)aggregate statistics of LCDM measure from csv files
+# Read (prev. computed) aggregate statistics of LCDM measure from csv files
 # put them in data frames where columns are subregions
-#wave 1 files
+# wave 1 files
 OUTPUT_DIR <- "./data/"
 DATA_DIR <- ""
-DATA_DIR_W1 <-paste0("./data/data_analysis",W1_dir_tag)
-DATA_DIR_W1_s <-paste0("./data/data_analysis",W1_dir_tag_s)
-DATA_DIR_W2 <- paste0("./data/data_analysis",W2_dir_tag)
+DATA_DIR_W1   <- paste0("./data/data_analysis",W1_dir_tag)
+DATA_DIR_W1_s <- paste0("./data/data_analysis",W1_dir_tag_s)
+DATA_DIR_W2   <- paste0("./data/data_analysis",W2_dir_tag)
 lcdm_files_w1 <- c()
 lcdm_files_w2 <- c()
-LCDM_thick_W1 <-data.frame()
-LCDM_vol_W1    <-data.frame()
+LCDM_thick_W1 <- data.frame()
+LCDM_vol_W1   <- data.frame()
 LCDM_surfarea_W1 <- data.frame()
 LCDM_ICV_W1 <- c()
 for (SUBREGION in subregions){
@@ -78,7 +82,7 @@ for (SUBREGION in subregions){
 LCDM_thick_W1_s    <- data.frame()
 LCDM_vol_W1_s      <- data.frame()
 LCDM_surfarea_W1_s <- data.frame()
-LCDM_ICV_W1_s <- c()
+LCDM_ICV_W1_s      <- c()
 for (SUBREGION in subregions){
   file_name <- paste(DATA_DIR_W1_s,"/",SUBREGION,"/",SUBREGION,"_lcdmstats.csv",sep="")
   lcdm_files_w1 <- c(lcdm_files_w1,file_name)
@@ -170,7 +174,7 @@ for (SUBREGION in subregions){
 MAS.normal.df$ID<-substr(as.character(MAS.normal.df$ID),1,4)
 MAS.healthy.df$ID<-substr(as.character(MAS.normal.df$ID),1,4)
 
-all.files.merged.df <-merge(MAS.normal.df,MAS.healthy.df, by="ID")
+all.files.merged.df <- merge(MAS.normal.df,MAS.healthy.df, by="ID")
 all.files.merged.df <- merge(all.files.merged.df,LCDM_thick_W1, by="ID",all.x=TRUE)
 all.files.merged.df <- merge(all.files.merged.df,LCDM_vol_W1, by="ID",all.x=TRUE,
                              suffixes=c("_thick_W1","_vol_W1"))

@@ -1,16 +1,13 @@
 #! /usr/bin/python
+# Python script to pool LCDM values from different subjects based on subject groups. Replaces bash script
 __author__ = 'Sancar'
 import os
 from  os.path import join as join_p
 import glob
 
 ROOT = "/cis/home/sadali/MAS_score_analysis/"
-
-
 regions= ['cingulate','TL']
-
 subregions={'TL':['stg','mtg','itg'], 'cingulate':[ 'postcing', 'antcing']}
-
 
 diags=[
     'normal',
@@ -78,7 +75,4 @@ for region in regions:
                           print file_match
                         if len(f) > 0  and os.path.exists(f[0]) and os.path.isfile(f[0]) and os.path.getsize(f[0])>0:
                             os.system("cat "+f[0]+" >> "+output_fname)
-
-
-
             print "pooled stats aggregated for "+ sub_region
